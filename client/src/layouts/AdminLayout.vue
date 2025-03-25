@@ -33,15 +33,17 @@
                 </ul>
             </nav>
 
-            <div class="authen-logout" v-if="isAuthenticated">
-                <p>
-                    Welcome, {{ currentUser ? currentUser.name || currentUser.email : '' }}
-                </p>
-                <button @click="logout">Logout</button>
-            </div>
-
-            <div class="nav-bar-btn" id="bar-btn" @click="onClickBarIcon">
-                <i class="fa-solid fa-layer-group fa-xl"></i>
+            <div class="auth--nav-icon">
+                <div class="authen-logout" v-if="isAuthenticated">
+                    <p>
+                        Welcome, {{ currentUser ? currentUser.name || currentUser.email : '' }}
+                    </p>
+                    <button @click="logout">Logout</button>
+                </div>
+    
+                <div class="nav-bar-btn" id="bar-btn" @click="onClickBarIcon">
+                    <i class="fa-solid fa-layer-group fa-xl"></i>
+                </div>
             </div>
 
             <nav class="bar-icon--nav" id="nav--bar-icon" @click="closeNav">
@@ -134,12 +136,12 @@
             document.addEventListener('click', this.closeNav);
         },
         beforeDestroy() {
-            document.removeEventListener('click', closeNav);
+            document.removeEventListener('click', this.closeNav);
         }
     }    
 </script>
 
-<style>
+<style scoped>
     .admin-layout {
         --text-color: #000;
         --secondary-text-color: #fff;
@@ -198,6 +200,72 @@
         display: flex;
     }
 
+    .auth--nav-icon {
+        display: flex;
+    }
+
+    .login-register-logout {
+        display: flex;
+        align-items: center;
+    }
+
+    .authen-logout {
+        display: flex;
+        align-items: center;
+        gap: 1em;
+    }
+
+    .authen-logout p {
+        color: var(--secondary-text-color);
+        font-size: 0.9em;
+    }
+
+    .authen-logout button {
+        background-color: var(--secondary-color);
+        color: var(--background-color);
+        border: none;
+        padding: 0.5em 1em;
+        border-radius: 0.3em;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .authen-logout button:hover {
+        opacity: 0.8;
+        transform: scale(1.05);
+    }
+
+    .login-register {
+        display: flex;
+        gap: 1em;
+    }
+
+    .auth-link {
+        color: var(--secondary-text-color);
+        padding: 0.5em 1em;
+        border-radius: 0.3em;
+        transition: all 0.3s ease;
+    }
+
+    .auth-link:first-child, .auth-link:last-child:hover {
+        background-color: transparent;
+        border: 1px solid var(--secondary-color);
+        transition: all 0.3s ease-in-out;
+    }
+
+    .auth-link:last-child,.auth-link:last-child:hover {
+        background-color: var(--secondary-color);
+        border: 0 solid var(--secondary-color);
+        color: var(--background-color);
+        font-weight: bold;
+    }
+
+    .auth-link:hover {
+        opacity: 0.9;
+        transform: translateY(-3px);
+    }
+
     .admin-layout header nav ul {
         list-style-type: none;
         display: flex;
@@ -206,7 +274,7 @@
     .admin-layout header nav ul li .router-link {
         padding: 0.8em 1em;
         color: var(--secondary-text-color);
-        border-bottom: 0.1em solid var(--header-background-color);
+        border-bottom: 0.1em solid var(--header-background-color) ;
         transition: all 0.3s ease-in-out;
     }
 
@@ -221,7 +289,7 @@
     }
 
     .admin-layout .content-wrapper {
-        margin-top: calc(2em + 40px);
+        margin-top: calc(2em + 40px)
     }
 
     .admin-layout .content-wrapper main {
@@ -305,6 +373,12 @@
         }
 
         .admin-layout header nav.bar-icon--nav .nav-list 
+        .nav-items .router-link:hover span {
+            color: #8BCAD9;
+            font-weight: 600;
+        }
+
+        .admin-layout header nav.bar-icon--nav .nav-list 
         .nav-items .nav-router-link-active {
             border-color: #8BCAD9;
             border-left: 0.3em solid #8BCAD9;
@@ -318,11 +392,42 @@
         .nav-items .nav-router-link-active span {
             color: inherit;
         }
+    }
 
-        .admin-layout header nav.bar-icon--nav .nav-list 
-        .nav-items .router-link:hover span {
-            color: #8BCAD9;
-            font-weight: 600;
+    @media screen and (max-width: 768px) {
+        .login-register-logout {
+            margin-right: 1em;
+        }
+        
+        .authen-logout {
+            gap: 0.5em;
+            margin-right: 0.5em;
+        }
+        
+        .login-register {
+            gap: 0.5em;
+        }
+        
+        .auth-link {
+            text-align: center;
+            font-size: 0.9em;
+            padding: 0.4em 0.8em;
+        }
+    }
+
+    @media screen and (max-width: 480px) {
+        .login-register-logout {
+            position: absolute;
+            top: calc(2em + 40px);
+            right: 0;
+            background-color: var(--background-color);
+            padding: 1em;
+            border-radius: 0 0 0 1em;
+            z-index: 999;
+        }
+        
+        .admin-layout header {
+            flex-wrap: wrap;
         }
     }
 </style>

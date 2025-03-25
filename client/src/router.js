@@ -157,26 +157,4 @@ router.beforeEach((to, from, next) => {
     next();
 });
 
-router.afterEach((to) => {
-    if (to.meta.authForm) {
-        // Đảm bảo CSS được áp dụng sau khi chuyển trang
-        setTimeout(() => {
-            const forms = document.querySelectorAll('.register');
-            forms.forEach(form => {
-            if (form) {
-                form.style.display = 'flex';
-                form.style.flexDirection = 'column';
-                form.style.backgroundColor = '#fff';
-                form.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
-                form.style.width = 'fit-content';
-                form.style.gap = '3em';
-                form.style.margin = '4.5em auto';
-                form.style.padding = '2.5em 4em';
-                form.style.borderRadius = '2em';
-            }
-            });
-        }, 0);
-    }
-});
-
 export default router;

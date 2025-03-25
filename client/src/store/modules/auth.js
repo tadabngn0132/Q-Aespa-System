@@ -111,19 +111,22 @@ const actions = {
                     commit('SET_USER_ID', response.user.userId);
                 }
 
+                let userRole = '';
+
                 if (response.role) {
-                    commit('SET_ROLE', response.role);
+                    userRole = response.role;
+                    commit('SET_ROLE', userRole);
                 } else if (response.user && response.user.role) {
-                    commit('SET_ROLE', response.user.role);
+                    userRole = response.user.role;
+                    commit('SET_ROLE', userRole);
                 }
 
-                const role = response.role;
-                if (role === 'admin') {
+                console.log('User role:', userRole);
+
+                if (userRole === 'admin') {
                     router.push('/admin');
-                } else if (role === 'student') {
-                    router.push('/student');
                 } else {
-                    router.push('/');
+                    router.push('/student');
                 }
                 
                 return response;
@@ -152,6 +155,12 @@ const actions = {
 
                 if (userProfile.role) {
                     commit('SET_ROLE', userProfile.role);
+
+                    if (userProfile === 'admin') {
+                        router.push('/admin');
+                    } else {
+                        router.push('/student');
+                    }
                 }
 
                 return userProfile;
@@ -169,7 +178,10 @@ const actions = {
     logout({ commit }) {
         apiClient.clearToken();
         commit('CLEAR_AUTH');
-        router.push('/student')
+
+        if (router.currentRoute.path !== '/student') {
+            router.push('/student');
+        }
     },
 
     async checkAuthState({ commit, dispatch }) {

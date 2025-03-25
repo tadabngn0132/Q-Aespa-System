@@ -140,7 +140,7 @@
     }    
 </script>
 
-<style>
+<style scoped>
     .student-layout {
         --text-color: #000;
         --secondary-text-color: #fff;
@@ -399,7 +399,8 @@
         }
         
         .authen-logout {
-            gap: 0.75em;
+            gap: 0.5em;
+            margin-right: 0.5em;
         }
         
         .login-register {

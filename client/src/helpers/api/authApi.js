@@ -31,7 +31,7 @@ export const authApi = {
 
     logout: () => {
         apiClient.clearToken();
-        this.$router.push('/login');
+        return true;
     },
 
     isAuthenticated: () => {
