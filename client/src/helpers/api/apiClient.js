@@ -34,6 +34,17 @@ const createApiClient = (path) => {
         error => Promise.reject(error)
     );
 
+    client.interceptors.response.use(
+        response => response,
+        error => {
+            if (error.response && error.response.status === 401) {
+                console.log('Token expired or invalid, logging out...');
+                store.dispatch('auth/logout');
+                router.push('/login');
+            }
+        }
+    )
+
     return client;
 };
 

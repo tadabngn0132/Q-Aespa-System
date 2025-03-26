@@ -25,11 +25,10 @@
         </nav>
 
         <div class="question-answer">
-            <!-- Hiển thị questions nếu tab questions được chọn -->
             <div v-if="activeTab === 'questions'" class="questions-container">
                 <h2>Your Questions</h2>
                 <ul v-if="userQuestions.length > 0" class="questions-list">
-                    <li v-for="(question, index) in userQuestions" :key="index" class="question-item">
+                    <li v-for="(question, i) in userQuestions" :key="i" class="question-item">
                         <router-link :to="{ name: 'StudentQuestionDetail', params: { id: question._id } }">
                             {{ question.title }}
                         </router-link>
@@ -39,11 +38,10 @@
                 <p v-else>You haven't asked any questions yet.</p>
             </div>
 
-            <!-- Hiển thị answers nếu tab answers được chọn -->
             <div v-if="activeTab === 'answers'" class="answers-container">
                 <h2>Your Answers</h2>
                 <ul v-if="userAnswers.length > 0" class="answers-list">
-                    <li v-for="(answer, index) in userAnswers" :key="index" class="answer-item">
+                    <li v-for="(answer, i) in userAnswers" :key="i" class="answer-item">
                         <p>{{ answer.description }}</p>
                         <router-link :to="{ name: 'StudentQuestionDetail', params: { id: answer.questionId } }">
                             View Question
@@ -64,7 +62,7 @@ export default {
     name: 'Profile',
     data() {
         return {
-            activeTab: 'questions', // Mặc định hiển thị tab questions
+            activeTab: 'questions',
             userQuestions: [],
             userAnswers: []
         }
@@ -82,7 +80,7 @@ export default {
         async fetchUserQuestions() {
             try {
                 if (this.currentUser && this.currentUser.userId) {
-                    this.userQuestions = await exportApis.questions.getQuestionsByUserId(this.currentUser.userId);
+                    this.userQuestions = await exportApis.users.getQuestionsByUserId(this.currentUser.userId);
                 }
             } catch (error) {
                 console.error("Error fetching user questions:", error);
@@ -99,7 +97,6 @@ export default {
         }
     },
     watch: {
-        // Khi tab thay đổi, tải dữ liệu tương ứng
         activeTab(newTab) {
             if (newTab === 'questions') {
                 this.fetchUserQuestions();
@@ -107,7 +104,6 @@ export default {
                 this.fetchUserAnswers();
             }
         },
-        // Khi người dùng được tải, tải dữ liệu cho tab đang hiển thị
         currentUser(newUser) {
             if (newUser) {
                 if (this.activeTab === 'questions') {
@@ -119,7 +115,6 @@ export default {
         }
     },
     mounted() {
-        // Tải dữ liệu cho tab mặc định khi component được tạo
         if (this.currentUser) {
             if (this.activeTab === 'questions') {
                 this.fetchUserQuestions();

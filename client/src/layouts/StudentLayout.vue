@@ -67,6 +67,11 @@
                             <span>Tags</span>
                         </router-link>
                     </li>
+                    <li class="nav-items">
+                        <router-link class="router-link" to="/student/profile" exact-active-class="nav-router-link-active">
+                            <span>Profile</span>
+                        </router-link>
+                    </li>
                 </ul>
             </nav>
         </header>

@@ -100,6 +100,12 @@ const actions = {
             
             if (response && response.token) {
                 commit('SET_TOKEN', response.token);
+
+                if (response.expiresIn) {
+                    const expiresInMs = response.expiresIn * 1000;
+                    const expirationTime = new Date().getTime() + expiresInMs;
+                    localStorage.setItem('tokenExpiration', expirationTime);
+                }
                 
                 if (response.user) {
                     commit('SET_USER', response.user);
@@ -191,6 +197,16 @@ const actions = {
             if (!token) {
                 console.log('No token found in localStorage');
                 return;
+            }
+
+            const tokenExpiration = localStorage.getItem('tokenExpiration');
+            if (tokenExpiration) {
+                const now = new Date().getTime();
+                if (now >= parseInt(tokenExpiration)) {
+                    console.log('Token has expired');
+                    dispatch('logout');
+                    return;
+                }
             }
 
             console.log('Found token, setting up authentication');
