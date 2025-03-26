@@ -2,7 +2,7 @@
     <div class="admin-question-detail">
         <div class="question-title-create-btn">
             <h1>{{ question.title }}</h1>
-            <router-link class="create-btn" to="askQuestion">
+            <router-link class="create-btn" :to="{name: 'askQuestion'}">
                 Ask Question
             </router-link>
         </div>
@@ -96,7 +96,7 @@
     .admin-question-detail .question-title-create-btn .create-btn {
         background-color: #1B75D0;
         color: #fff;
-        width: 30%;
+        width: 35%;
         padding: 0.5em 1em;
         border-radius: 0.5em;
         transition: background-color 0.2s ease;

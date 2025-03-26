@@ -19,7 +19,7 @@
                 <span class="answer-description">
                     {{ answer.description }}
                 </span>
-                <div class="ud-btn" v-if="userRole === 'admin'">
+                <div class="ud-btn" v-if="canEditAnswer(answer)">
                     <button class="edit-btn" @click="startEdit(answer)">Edit</button>
                     <button class="delete-btn" @click="deleteAnswer(answer._id)">Delete</button>
                 </div>
@@ -73,11 +73,23 @@ export default {
             this.editingAnswer = { ...answer };
         },
         async createOrUpdate(answer) {
+            const userId = this.$store.state.auth.userId;
+
+            if (!userId) {
+                alert('You must be logged in to create or edit answers');
+                return;
+            }
+
+            const answerwithUserId = {
+                ...answer,
+                userId: userId
+            };
+
             if (answer._id) {
-                await exportApis.answers.updateAnswer(this.question._id, answer._id, answer);
+                await exportApis.answers.updateAnswer(this.question._id, answer._id, answerwithUserId);
                 alert('Answer updated successfully!');
             } else {
-                await exportApis.answers.createAnswer(this.question._id, answer);
+                await exportApis.answers.createAnswer(this.question._id, answerwithUserId);
                 alert('Answer created successfully!');
             }
             this.answers = await exportApis.answers.getAnswers(this.question._id);
@@ -91,6 +103,14 @@ export default {
                 this.answers = await exportApis.answers.getAnswers(this.question._id);
                 this.answerCount = this.answers.length;
             }
+        },
+        canEditAnswer(answer) {
+            if (this.userRole === 'admin') {
+                return true;
+            }
+
+            const currentUserId = this.$store.state.auth.userId;
+            return currentUserId && answer.userId === currentUserId;
         }
     },
     watch: {

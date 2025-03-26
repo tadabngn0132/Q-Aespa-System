@@ -112,14 +112,14 @@ const routes = [
                 component: () => import('@/views/student/Questions.vue')
             }, 
             {
-                path: '/admin/askquestion',
+                path: '/student/askquestion',
                 name: 'studentAskQuestion',
-                component: () => import('@/views/admin/AskQuestion.vue')
+                component: () => import('@/views/student/AskQuestion.vue')
             },
             {
-                path: '/admin/editquestion',
+                path: '/student/editquestion',
                 name: 'studentEditQuestion',
-                component: () => import('@/views/admin/EditQuestion.vue')
+                component: () => import('@/views/student/EditQuestion.vue')
             },
             {
                 path: '/student/questions/:id',
@@ -132,9 +132,14 @@ const routes = [
                 component: () => import('@/views/student/Tags.vue')
             },
             {
-                path: '/admin/tags/:id',
+                path: '/student/tags/:id',
                 name: 'studentTagDetail',
-                component: () => import('@/views/admin/TagDetail.vue')
+                component: () => import('@/views/student/TagDetail.vue')
+            },
+            {
+                path: '/student/profile',
+                name: 'Profile',
+                component: () => import('@/views/student/Profile.vue')
             }
         ]
     }

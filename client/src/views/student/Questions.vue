@@ -3,7 +3,7 @@
         <div class="question-title--create-btn">
             <h1 v-if="questionCount > 1" class="questions-title">Newest Questions</h1>
             <h1 v-else class="questions-title">Newest Question</h1>
-            <router-link class="create-btn" to="askQuestion">
+            <router-link class="create-btn" to="askquestion">
                 Ask Question
             </router-link>
         </div>

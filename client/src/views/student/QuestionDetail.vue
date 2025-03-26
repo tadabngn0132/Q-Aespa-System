@@ -2,7 +2,7 @@
     <div class="student-question-detail">
         <div class="question-title-create-btn">
             <h1>{{ question.title }}</h1>
-            <router-link class="create-btn" to="askQuestion">
+            <router-link class="create-btn" :to="{name: 'studentAskQuestion'}">
                 Ask Question
             </router-link>
         </div>
@@ -95,7 +95,7 @@
         background-color: #0077cc;
         color: white;
         font-weight: 500;
-        width: 30%;
+        width: 35%;
         padding: 0.5em 1em;
         border-radius: 8px;
         transition: background-color 0.2s ease;
