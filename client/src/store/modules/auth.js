@@ -105,6 +105,12 @@ const actions = {
                     const expiresInMs = response.expiresIn * 1000;
                     const expirationTime = new Date().getTime() + expiresInMs;
                     localStorage.setItem('tokenExpiration', expirationTime);
+
+                    const timeUntilExpiration = expiresInMs;
+                    setTimeout(() => {
+                        commit('CLEAR_AUTH');
+                        router.push('/login');
+                    }, timeUntilExpiration);
                 }
                 
                 if (response.user) {
@@ -145,7 +151,7 @@ const actions = {
         }
     },
 
-    async fetchUserProfile({ commit, state }) {
+    async fetchUserProfile({ commit, state, dispatch }) {
         try {
             if (!state.userId) {
                 console.warn('User ID not available, cannot fetch profile');
@@ -169,10 +175,27 @@ const actions = {
                     }
                 }
 
+                const tokenExpiration = localStorage.getItem('tokenExpiration');
+                if (tokenExpiration) {
+                    const now = new Date().getTime();
+                    const timeLeft = parseInt(tokenExpiration) - now;
+
+                    if (timeLeft <= 0) {
+                        console.log('Token has expired');
+                        dispatch('logout');
+                        return;
+                    } else {
+                        setTimeout(() => {
+                            dispatch('logout');
+                        }, timeLeft);
+                    }
+                }
+                
                 return userProfile;
             } else {
                 throw new Error('User profile not found');
             }
+
         } catch (error) {
             commit('SET_ERROR', error.message || 'Unable to get user information');
             return null;

@@ -5,7 +5,15 @@ const vm = new Vue();
 
 const handleError = fn => (...params) =>
     fn(...params).catch(error => {
-        vm.flash(`${error.response.status}: ${error.response.statusText}`, 'error');
+        if (Vue.prototype.$flashMessage) {
+            Vue.prototype.$flashMessage.show(
+                `Error: ${error.response ? error.response.statusText : 'Connection error'}`,
+                'error'
+            );
+        } else {
+            console.error(`API Error: ${error.response ? error.response.status : 'Unknown'}`);
+            alert(`Error: ${error.response ? error.response.statusText : 'Could not connect to server'}`);
+        }
         throw error;
     });
 

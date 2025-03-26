@@ -26,9 +26,29 @@
         },
         methods: {
             createOrUpdate: async function(question) {
-                const res = await exportApis.questions.createQuestion(question);
-                alert('Question created successfully!');
-                this.$router.push(`/admin/questions/${res._id}`);
+                const userId = this.$store.state.auth.userId;
+
+                if (!userId) {
+                    alert('You need login to ask question.');
+                    return;
+                }
+
+                const questionWithUserId = {
+                    ...question,
+                    userId: userId
+                };
+
+                console.log('Creating question with data:', questionWithUserId);
+
+                try {
+                    const res = await exportApis.questions.createQuestion(questionWithUserId);
+                    alert('Question created successfully!');
+                    this.$router.push(`/student/questions/${res._id}`);
+                } catch (error) {
+                    console.error('Error creating question:', error);
+                    alert('Can not create question' + (error.message))
+                }
+
             }
         }
     };

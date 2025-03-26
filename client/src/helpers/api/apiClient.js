@@ -1,4 +1,6 @@
 import axios from "axios";
+import store from '@/store';
+import router from '@/router'
 
 const baseURL = 'http://localhost:5995/';
 
@@ -42,6 +44,7 @@ const createApiClient = (path) => {
                 store.dispatch('auth/logout');
                 router.push('/login');
             }
+            return Promise.reject(error);
         }
     )
 

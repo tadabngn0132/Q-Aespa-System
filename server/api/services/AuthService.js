@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/UserModel');
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET_KEY = 'your-secret-key';
+const JWT_SECRET_KEY = process.env.JWT_SECRET || 'fallback-secret-key';
 
 exports.hashPassword = async (password) => {
     try {

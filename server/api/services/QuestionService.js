@@ -47,7 +47,7 @@ const questionService = {
 
         for (const question of questions) {
             if (question.userId) {
-                const hasUserId = question.userId === userId;
+                const hasUserId = question.userId.toString() === userId.toString();
                 
                 if (hasUserId) {
                     questionsIncludeUserId.push(question);
