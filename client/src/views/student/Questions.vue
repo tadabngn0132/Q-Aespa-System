@@ -27,7 +27,7 @@
                         <p>{{ getTruncatedDescription(question.description) }}</p>
                         <ul class="tags-list" v-if="question.tags && question.tags.length > 0">
                             <li class="tags" v-for="(tag, j) in question.tags" :key="j">
-                                <router-link class="tag" :to="{name: 'TagDetail', params: { id: tag._id }}">
+                                <router-link class="tag" :to="{name: 'studentTagDetail', params: { id: tag._id }}">
                                     {{ tag.name }}
                                 </router-link>
                             </li>

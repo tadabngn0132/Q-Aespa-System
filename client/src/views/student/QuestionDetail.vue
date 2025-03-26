@@ -18,15 +18,19 @@
 
         <ul class="tags-list" v-if="question.tags && question.tags.length > 0">
             <li class="tags" v-for="(tag, i) in question.tags" :key="i">
-                <router-link :to="{ name: 'TagDetail', params: { id: tag._id }}" class="tag">
+                <router-link :to="{ name: 'studentTagDetail', params: { id: tag._id }}" class="tag">
                     {{ tag.name || 'No' }}
                 </router-link>
             </li>
         </ul>
+
+        <answers
+        :question="question"></answers>
     </div>
 </template>
 
 <script>
+    import Answers from '@/components/Answers.vue';
     import exportApis from '@/helpers/api/exportApis';
     import dayjs from 'dayjs';
     import relativeTime from 'dayjs/plugin/relativeTime';
@@ -35,6 +39,9 @@
 
     export default {
         name: 'StudentQuestionDetail',
+        components: {
+            'answers': Answers
+        },
         data () {
             return {
                 question: {

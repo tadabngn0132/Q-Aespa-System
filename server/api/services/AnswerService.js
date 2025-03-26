@@ -18,8 +18,9 @@ const answerService = {
         return answer;
     },
 
-    countAnswerByQuestionId: async (questionId) => {
-        return await Answer.countDocuments({ questionId });
+    getAnswersByUserId: async (userId) => {
+        return await Answer.find({ userId: userId})
+            .sort({ createdAt: -1 });
     },
 
     createAnswer: async (answerData) => {

@@ -10,4 +10,7 @@ module.exports = app => {
         .get(AnswerBuilder.readAnAnswer)
         .put(AnswerBuilder.updateAnAnswer)
         .delete(AnswerBuilder.deleteAnAnswer);
+    app
+        .route('/users/:userId/answers')
+        .get(AnswerBuilder.listAnswersByUserId);
 };

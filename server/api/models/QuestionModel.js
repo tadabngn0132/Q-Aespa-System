@@ -23,7 +23,12 @@ const QuestionSchema = new Schema(
                 ref: 'Tag',
                 required: true
             }
-        ]
+        ],
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
+        }
     },
     { 
         collection: 'Questions',

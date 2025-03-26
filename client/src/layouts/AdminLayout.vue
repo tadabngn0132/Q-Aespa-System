@@ -141,7 +141,7 @@
     }    
 </script>
 
-<style scoped>
+<style>
     .admin-layout {
         --text-color: #000;
         --secondary-text-color: #fff;

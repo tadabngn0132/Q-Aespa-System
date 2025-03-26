@@ -20,6 +20,11 @@ export const answerApi = {
         const res = await apiClient.answerApiClient.get(path);
         return res.data;
     }),
+    getAnswersByUserId: handleError(async (userId) => {
+        const path = `users/${userId}/answers`;
+        const res = await apiClient.answerApiClient.get(path);
+        return res.data;
+    }),
     createAnswer: handleError(async (questionId, payload) => {
         const path = `questions/${questionId}/answers`
         const res = await apiClient.answerApiClient.post(path, payload);

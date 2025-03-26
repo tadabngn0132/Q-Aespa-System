@@ -19,7 +19,7 @@
                 <span class="answer-description">
                     {{ answer.description }}
                 </span>
-                <div class="ud-btn">
+                <div class="ud-btn" v-if="userRole === 'admin'">
                     <button class="edit-btn" @click="startEdit(answer)">Edit</button>
                     <button class="delete-btn" @click="deleteAnswer(answer._id)">Delete</button>
                 </div>
@@ -35,6 +35,7 @@
 <script>
 import exportApis from '@/helpers/api/exportApis';
 import AnswerForm from './AnswerForm.vue';
+import { mapGetters } from 'vuex';
 
 export default {
     name: 'Answers',
@@ -56,6 +57,9 @@ export default {
                 }
             }
         }
+    },
+    computed: {
+        ...mapGetters('auth', ['userRole'])
     },
     data() {
         return {

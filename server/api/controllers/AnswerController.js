@@ -9,11 +9,21 @@ const answerController = {
 
             const answers = await answerService.getAnswersByQuestionId(questionId, page, limit);
             
-            // Trả về trực tiếp mảng answers thay vì đóng gói trong data.answers
             return res.status(200).json(answers);
         } catch (error) {
             console.error('Error getting answers:', error);
             return res.status(500).json({ success: false, message: error.message });
+        }
+    },
+
+    listAnswersByUserId: async (req, res) => {
+        try {
+            const { userId } = req.params;
+            const answers = await answerService.getAnswersByUserId(userId);
+            return res.status(200).json(answers);
+        } catch (err) {
+            console.error({ message: err.message });
+            return res.status(500).json({ success: false, message: err.message })
         }
     },
 
@@ -22,7 +32,6 @@ const answerController = {
             const { answerId } = req.params;
             const answer = await answerService.getAnswerById(answerId);
 
-            // Trả về trực tiếp đối tượng answer
             return res.status(200).json(answer);
         } catch (error) {
             console.error('Error getting answer:', error);
@@ -41,7 +50,6 @@ const answerController = {
 
             const newAnswer = await answerService.createAnswer(answerData);
 
-            // Trả về trực tiếp đối tượng answer mới
             return res.status(201).json(newAnswer);
         } catch (error) {
             console.error('Error creating answer:', error);
@@ -63,7 +71,6 @@ const answerController = {
 
             const updatedAnswer = await answerService.updateAnswer(answerId, answerData);
 
-            // Trả về trực tiếp đối tượng answer đã cập nhật
             return res.status(200).json(updatedAnswer);
         } catch (error) {
             console.error('Error updating answer:', error);
@@ -76,7 +83,6 @@ const answerController = {
             const { answerId } = req.params;
             const deletedId = await answerService.deleteAnswer(answerId);
 
-            // Trả về ID của answer đã xóa
             return res.status(200).json(deletedId);
         } catch (error) {
             console.error('Error deleting answer:', error);

@@ -41,7 +41,7 @@ const routes = [
             }, 
             {
                 path: '/admin/askquestion',
-                name: 'QuestionForm',
+                name: 'askQuestion',
                 component: () => import('@/views/admin/AskQuestion.vue')
             },
             {
@@ -110,6 +110,16 @@ const routes = [
                 path: '/student/questions',
                 name: 'StudentQuestions',
                 component: () => import('@/views/student/Questions.vue')
+            }, 
+            {
+                path: '/admin/askquestion',
+                name: 'studentAskQuestion',
+                component: () => import('@/views/admin/AskQuestion.vue')
+            },
+            {
+                path: '/admin/editquestion',
+                name: 'studentEditQuestion',
+                component: () => import('@/views/admin/EditQuestion.vue')
             },
             {
                 path: '/student/questions/:id',
@@ -120,6 +130,11 @@ const routes = [
                 path: '/student/tags',
                 name: 'StudentTags',
                 component: () => import('@/views/student/Tags.vue')
+            },
+            {
+                path: '/admin/tags/:id',
+                name: 'studentTagDetail',
+                component: () => import('@/views/admin/TagDetail.vue')
             }
         ]
     }

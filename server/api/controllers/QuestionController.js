@@ -26,6 +26,21 @@ exports.list_questions_by_tag_id = async (req, res) => {
     }
 };
 
+exports.list_questions_by_user_id = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+
+        if (!userId) {
+            return res.status(400).send({ message: 'User ID is required' });
+        }
+
+        const questions = await questionService.getQuestionByUserId(userId);
+        res.json(questions);
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
+}
+
 exports.create_a_question = async (req, res) => {
     try {
         const question = await questionService.createQuestion(req.body);

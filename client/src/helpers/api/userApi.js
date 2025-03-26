@@ -13,6 +13,10 @@ export const userApi = {
         const res = await apiClient.userApiClient.get();
         return res.data;
     }),
+    getQuestionsByUserId: handleError(async id => {
+            const res = await apiClient.questionApiClient.get(`${id}/questions`);
+            return res.data;
+        }),
     deleteUser: handleError(async id => {
         const res = await apiClient.userApiClient.delete(`${id}`);
         return res.data;

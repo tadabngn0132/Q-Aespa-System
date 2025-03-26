@@ -18,7 +18,7 @@ export const questionApi = {
         const res = await apiClient.questionApiClient.get();
         return res.data;
     }),
-    getQuestionsByTagId :handleError(async (tagId) => {
+    getQuestionsByTagId: handleError(async (tagId) => {
         const res = await apiClient.questionApiClient.get(`bytag/${tagId}`);
         return res.data;
     }),

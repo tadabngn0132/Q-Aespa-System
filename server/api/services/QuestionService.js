@@ -41,6 +41,22 @@ const questionService = {
         return questionsIncludeTag;
     },
 
+    getQuestionByUserId: async (userId) => {
+        const questions = await Question.find({}).populate('tags', 'name _id');
+        let questionsIncludeUserId = [];
+
+        for (const question of questions) {
+            if (question.userId) {
+                const hasUserId = question.userId === userId;
+                
+                if (hasUserId) {
+                    questionsIncludeUserId.push(question);
+                }
+            };
+        }
+        return questionsIncludeUserId;
+    },
+
     createQuestion: async (questionData) => {
         let tagIds = [];
         const tags = questionData.tags;

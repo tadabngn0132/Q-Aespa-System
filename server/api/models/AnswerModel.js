@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Question = mongoose.model('Question');
 
 const { Schema } = mongoose;
 
@@ -13,6 +12,11 @@ const AnswerSchema = new Schema(
         questionId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Question'
+        },
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
         }
     },
     {
