@@ -39,10 +39,14 @@ const createApiClient = (path) => {
     client.interceptors.response.use(
         response => response,
         error => {
-            if (error.response && error.response.status === 401) {
+            if (error.response.status === 401) {
                 console.log('Token expired or invalid, logging out...');
+                Vue.$toast.warning('Your session has expired. Please log in again.');
                 store.dispatch('auth/logout');
                 router.push('/login');
+            } else if (error.response.status >= 500) {
+                console.error('Server Error:', error.response);
+                Vue.$toast.error('Server Error: Please try again later');
             }
             return Promise.reject(error);
         }

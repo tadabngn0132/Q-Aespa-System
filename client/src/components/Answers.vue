@@ -85,23 +85,41 @@ export default {
                 userId: userId
             };
 
-            if (answer._id) {
-                await exportApis.answers.updateAnswer(this.question._id, answer._id, answerwithUserId);
-                alert('Answer updated successfully!');
-            } else {
-                await exportApis.answers.createAnswer(this.question._id, answerwithUserId);
-                alert('Answer created successfully!');
+            try {
+                if (answer._id) {
+                    await exportApis.answers.updateAnswer(this.question._id, answer._id, answerwithUserId);
+                    this.$showMessage.success('Answer updated successfully!');
+                } else {
+                    await exportApis.answers.createAnswer(this.question._id, answerwithUserId);
+                    this.$showMessage.success('Answer created successfully!');
+                }
+                this.answers = await exportApis.answers.getAnswers(this.question._id);
+                this.answerCount = this.answers.length;
+                this.editingAnswer = {};
+            } catch (error) {
+                console.error('Error handling answer:', error);
+                    
+                let errorMessage = 'Failed to handle answer';
+                if (error.response && error.response.data && error.response.data.message) {
+                    errorMessage = error.response.data.message;
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                
+                this.$showMessage.error(errorMessage);
             }
-            this.answers = await exportApis.answers.getAnswers(this.question._id);
-            this.answerCount = this.answers.length;
-            this.editingAnswer = {};
         },
         async deleteAnswer(answerId) {
             const sure = window.confirm('Do you really want to delete this answer?');
             if (sure) {
-                await exportApis.answers.deleteAnswer(this.question._id, answerId);
-                this.answers = await exportApis.answers.getAnswers(this.question._id);
-                this.answerCount = this.answers.length;
+                try {
+                    await exportApis.answers.deleteAnswer(this.question._id, answerId);
+                    this.answers = await exportApis.answers.getAnswers(this.question._id);
+                    this.answerCount = this.answers.length;
+                } catch  (error) {
+                    console.error('Error deleting answer:', error);
+                    alert(`Error: ${error.response ? error.response.data.message : 'Could not delete the answer'}`);
+                }
             }
         },
         canEditAnswer(answer) {

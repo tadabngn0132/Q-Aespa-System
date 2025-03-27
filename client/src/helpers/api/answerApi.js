@@ -1,12 +1,25 @@
 import apiClient from './apiClient';
 import Vue from 'vue';
 
-
-const vm = new Vue();
-
 const handleError = fn => (...params) =>
     fn(...params).catch(error => {
-        vm.flash(`${error.response.status}: ${error.response.statusText}`, 'error');
+        let errorMessage = 'An unknown error occurred';
+        
+        if (error.response) {
+            if (error.response.data && error.response.data.message) {
+                errorMessage = error.response.data.message;
+            } else {
+                errorMessage = `${error.response.status}: ${error.response.statusText}`;
+            }
+        } else if (error.message) {
+            errorMessage = error.message;
+        }
+        
+        console.error('API Error:', error);
+        
+        Vue.$toast.error(errorMessage);
+        
+        throw error;
     });
 
 export const answerApi = {

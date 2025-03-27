@@ -5,15 +5,22 @@ const vm = new Vue();
 
 const handleError = fn => (...params) =>
     fn(...params).catch(error => {
-        if (Vue.prototype.$flashMessage) {
-            Vue.prototype.$flashMessage.show(
-                `Error: ${error.response ? error.response.statusText : 'Connection error'}`,
-                'error'
-            );
-        } else {
-            console.error(`API Error: ${error.response ? error.response.status : 'Unknown'}`);
-            alert(`Error: ${error.response ? error.response.statusText : 'Could not connect to server'}`);
+        let errorMessage = 'An unknown error occurred';
+        
+        if (error.response) {
+            if (error.response.data && error.response.data.message) {
+                errorMessage = error.response.data.message;
+            } else {
+                errorMessage = `${error.response.status}: ${error.response.statusText}`;
+            }
+        } else if (error.message) {
+            errorMessage = error.message;
         }
+        
+        console.error('API Error:', error);
+        
+        Vue.$toast.error(errorMessage);
+        
         throw error;
     });
 

@@ -107,6 +107,7 @@ export default {
                 });
             } catch (error) {
                 console.error('Login failed:', error);
+                this.$showMessage.error('Login failed');
             }
         }
     }

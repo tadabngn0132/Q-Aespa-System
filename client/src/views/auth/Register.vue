@@ -126,6 +126,7 @@ export default {
                 });                
             } catch (error) {
                 console.error('Registration failed');
+                this.$showMessage.error('Registration failed');
             }
         }
     }

@@ -32,7 +32,7 @@
                 const userId = this.$store.state.auth.userId;
 
                 if (!userId) {
-                    alert('You need login to ask question.');
+                    this.$showMessage.warning('You need login to ask question.');
                     return;
                 }
 
@@ -41,9 +41,22 @@
                     userId: userId
                 };
 
-                await exportApis.questions.updateQuestion(questionWithUserId);
-                alert('Question updated successfully!');
-                this.$router.push(`/admin/questions/${question._id}`)
+                try {
+                    await exportApis.questions.updateQuestion(questionWithUserId);
+                    this.$showMessage.success('Question updated successfully!');
+                    this.$router.push(`/admin/questions/${question._id}`)
+                } catch (error) {
+                    console.error('Error updating question:', error);
+                    
+                    let errorMessage = 'Failed to update question';
+                    if (error.response && error.response.data && error.response.data.message) {
+                        errorMessage = error.response.data.message;
+                    } else if (error.message) {
+                        errorMessage = error.message;
+                    }
+                    
+                    this.$showMessage.error(errorMessage);
+                }
             }
         }
     };

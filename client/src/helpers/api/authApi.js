@@ -2,32 +2,24 @@ import apiClient from './apiClient';
 import Vue from 'vue';
 
 
-const vm = new Vue();
-
 const handleError = fn => (...params) =>
     fn(...params).catch(error => {
+        let errorMessage = 'An unknown error occurred';
+        
         if (error.response) {
-            console.error(`${error.response.status}: ${error.response.statusText}`);
-            if (Vue.prototype.$flashMessage) {
-                Vue.prototype.$flashMessage.show(
-                    `${error.response.status}: ${error.response.statusText}`,
-                    'error'
-                );
+            if (error.response.data && error.response.data.message) {
+                errorMessage = error.response.data.message;
             } else {
-                alert(`Error: ${error.response.statusText || 'Unknown error'}`);
+                errorMessage = `${error.response.status}: ${error.response.statusText}`;
             }
-        } else {
-            console.error(`Error: ${error.message || 'Unknown error'}`);
-            if (Vue.prototype.$flashMessage) {
-                Vue.prototype.$flashMessage.show(
-                    `Error: ${error.message || 'Unknown error'}`,
-                    'error'
-                );
-            } else {
-                alert(`Error: ${error.message || 'Unknown error'}`);
-            }
+        } else if (error.message) {
+            errorMessage = error.message;
         }
-
+        
+        console.error('API Error:', error);
+        
+        Vue.$toast.error(errorMessage);
+        
         throw error;
     });
 

@@ -2,15 +2,42 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 import store from './store';
-import VueFlashMessage from 'vue-flash-message';
-import 'vue-flash-message/dist/vue-flash-message.min.css';
+import Toast from 'vue-toastification';
+import 'vue-toastification/dist/index.css';
 
-Vue.use(VueFlashMessage, {
-  messageOptions: {
-    timeout: 3000,
-    pauseOnInteract: true
+const toastOptions = {
+  position: 'top-right',
+  timeout: 5000,
+  closeOnClick: true,
+  pauseOnFocusLoss: true,
+  pauseOnHover: true,
+  draggable: true,
+  draggablePercent: 0.6,
+  showCloseButtonOnHover: false,
+  hideProgressBar: false,
+  closeButton: 'button',
+  icon: true,
+  rtl: false
+};
+
+Vue.use(Toast, toastOptions);
+
+Vue.config.productionTip = false;
+
+Vue.prototype.$showMessage = {
+  success(message) {
+    Vue.$toast.success(message);
+  },
+  error(message) {
+    Vue.$toast.error(message);
+  },
+  info(message) {
+    Vue.$toast.info(message);
+  },
+  warning(message) {
+    Vue.$toast.warning(message);
   }
-});
+};
 
 Vue.config.productionTip = false;
 

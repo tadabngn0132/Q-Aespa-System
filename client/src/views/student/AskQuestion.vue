@@ -42,13 +42,20 @@
 
                 try {
                     const res = await exportApis.questions.createQuestion(questionWithUserId);
-                    alert('Question created successfully!');
+                    this.$showMessage.success('Question created successfully!');
                     this.$router.push(`/student/questions/${res._id}`);
                 } catch (error) {
                     console.error('Error creating question:', error);
-                    alert('Can not create question' + (error.message))
+                    
+                    let errorMessage = 'Failed to create question';
+                    if (error.response && error.response.data && error.response.data.message) {
+                        errorMessage = error.response.data.message;
+                    } else if (error.message) {
+                        errorMessage = error.message;
+                    }
+                    
+                    this.$showMessage.error(errorMessage);
                 }
-
             }
         }
     };

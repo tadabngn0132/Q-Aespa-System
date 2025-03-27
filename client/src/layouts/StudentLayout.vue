@@ -41,10 +41,10 @@
                         <button @click="logout">Logout</button>
                     </div>
                     <div class="login-register" v-else>
-                        <router-link to="login" class="auth-link">
+                        <router-link :to="{ path: '/login'}" class="auth-link">
                             Sign in
                         </router-link>
-                        <router-link to="register" class="auth-link">
+                        <router-link :to="{ path: '/register' }" class="auth-link">
                             Sign up
                         </router-link>
                     </div>

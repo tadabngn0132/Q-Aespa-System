@@ -22,9 +22,22 @@ import exportApis from '@/helpers/api/exportApis';
         },
         methods: {
             async createOrUpdate(tag) {
-                await exportApis.tags.updateTag(tag);
-                alert('Tag updated successfully!');
-                this.$router.push(`/admin/tags/${tag._id}`);
+                try {
+                    await exportApis.tags.updateTag(tag);
+                    this.$showMessage.success('Tag updated successfully!');
+                    this.$router.push(`/admin/tags/${tag._id}`);
+                } catch (error) {
+                    console.error('Error updating tag:', error);
+                    
+                    let errorMessage = 'Failed to update tag';
+                    if (error.response && error.response.data && error.response.data.message) {
+                        errorMessage = error.response.data.message;
+                    } else if (error.message) {
+                        errorMessage = error.message;
+                    }
+                    
+                    this.$showMessage.error(errorMessage);
+                }
             }
         },
         async mounted() {

@@ -24,9 +24,22 @@ export default {
         async editUser(user) {
             console.log('User data:', user);
             
-            const updatedUser = await exportApis.users.updateUser(this.user._id, user);
-            alert('User updated successfully!');
-            this.$router.push(`/admin/users/${updatedUser._id}`)
+            try {
+                const updatedUser = await exportApis.users.updateUser(this.user._id, user);
+                this.$showMessage.success('Uset updated successfully!');
+                this.$router.push(`/admin/users/${updatedUser._id}`);
+            } catch (error) {
+                console.error('Error updating user:', error);
+                    
+                    let errorMessage = 'Failed to update user';
+                    if (error.response && error.response.data && error.response.data.message) {
+                        errorMessage = error.response.data.message;
+                    } else if (error.message) {
+                        errorMessage = error.message;
+                    }
+                    
+                    this.$showMessage.error(errorMessage);
+            }
         }
     },
     async mounted() {
