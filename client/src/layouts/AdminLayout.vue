@@ -30,6 +30,11 @@
                             Tags
                         </router-link>
                     </li>
+                    <li>
+                        <router-link class="router-link" to="/admin/profile" exact-active-class="router-link-active">
+                            Profile
+                        </router-link>
+                    </li>
                 </ul>
             </nav>
 
@@ -66,6 +71,11 @@
                     <li class="nav-items">
                         <router-link class="router-link" to="/admin/tags" exact-active-class="nav-router-link-active">
                             <span>Tags</span>
+                        </router-link>
+                    </li>
+                    <li class="nav-items">
+                        <router-link class="router-link" to="/admin/profile" exact-active-class="nav-router-link-active">
+                            <span>Profile</span>
                         </router-link>
                     </li>
                 </ul>
@@ -198,6 +208,7 @@
 
     .admin-layout header nav.original-nav {
         display: flex;
+        margin-left: 7.5em;
     }
 
     .auth--nav-icon {

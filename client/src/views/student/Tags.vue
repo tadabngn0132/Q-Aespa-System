@@ -1,13 +1,6 @@
 <template>
     <div class="admin-tag-container">
-        <div class="tag-title-create-btn">
-            <h1 class="tags-title">Tags</h1>
-            <router-link 
-            to="CreateTag"
-            class="create-btn">
-                <span>Create Tag</span>
-            </router-link>
-        </div>
+        <h1 class="tags-title">Tags</h1>
 
         <p class="tags-specification">
             {{ tagSpecification }}
@@ -70,46 +63,12 @@ import exportApis from '@/helpers/api/exportApis';
         padding: 20px;
         font-family: 'Arial', sans-serif;
     }
-    
-    .tag-title-create-btn {
-        display: flex;
-        justify-content: space-between;
-        border-bottom: 0.01em solid #3498db;
-        align-items: center;
-        margin-bottom: 1em;
-    }
 
-    .tag-title-create-btn .tags-title {
-        margin-bottom: 0;
+    .tags-title {
+        margin-bottom: 0.25em;
         font-size: 2.2rem;
         color: #333;
         padding-bottom: 0.5em;
-    }
-
-    .tag-title-create-btn .create-btn {
-        display: inline-flex;
-        align-items: center;
-        background-color: #4BACB8;
-        text-decoration: none;
-        padding: 10px 20px;
-        border-radius: 6px;
-        font-weight: bold;
-        font-size: 1rem;
-        transition: all 0.2s ease;
-    }
-    
-    .tag-title-create-btn .create-btn span {
-        color: #fff;
-    }
-
-    .tag-title-create-btn .create-btn:hover {
-        background-color: #3A8F9A;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .tag-title-create-btn .create-btn:active {
-        transform: translateY(0);
     }
 
     .tags-specification {

@@ -237,28 +237,34 @@ const actions = {
 
             apiClient.setupAuthToken(token);
 
+            
+            const savedRole = localStorage.getItem('userRole');
+            if (savedRole) {
+                commit('SET_ROLE', savedRole);
+            }
+            
+            const saveUserId = localStorage.getItem('userId');
+            if (saveUserId) {
+                commit('SET_USER_ID', saveUserId);
+            }
+            
             const userData = localStorage.getItem('userData');
             if (userData) {
                 try {
                     const parsedUserData = JSON.parse(userData);
 
-                    commit('SET_USER', parsedUserData);
+                    const userWithId = {
+                        ...parsedUserData,
+                        userId: saveUserId,
+                        role: savedRole
+                    }
+
+                    commit('SET_USER', userWithId);
                 } catch (error) {
                     console.error('Error parsing userData:', error);
                 }
             }
-
-            const savedRole = localStorage.getItem('userRole');
-            const saveUserId = localStorage.getItem('userId');
-
-            if (savedRole) {
-                commit('SET_ROLE', savedRole);
-            }
-
-            if (saveUserId) {
-                commit('SET_USER_ID', saveUserId);
-            }
-
+            
             if (saveUserId) {
                 try {
                     await dispatch('fetchUserProfile');

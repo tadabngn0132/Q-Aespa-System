@@ -29,7 +29,19 @@
         },
         methods: {
             createOrUpdate: async function(question) {
-                await exportApis.questions.updateQuestion(question);
+                const userId = this.$store.state.auth.userId;
+
+                if (!userId) {
+                    alert('You need login to ask question.');
+                    return;
+                }
+
+                const questionWithUserId = {
+                    ...question,
+                    userId: userId
+                };
+                
+                await exportApis.questions.updateQuestion(questionWithUserId);
                 alert('Question updated successfully!');
                 this.$router.push(`/admin/questions/${question._id}`)
             }

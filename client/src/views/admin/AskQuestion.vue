@@ -26,7 +26,19 @@
         },
         methods: {
             createOrUpdate: async function(question) {
-                const res = await exportApis.questions.createQuestion(question);
+                const userId = this.$store.state.auth.userId;
+
+                if (!userId) {
+                    alert('You need login to ask question.');
+                    return;
+                }
+
+                const questionWithUserId = {
+                    ...question,
+                    userId: userId
+                };
+
+                const res = await exportApis.questions.createQuestion(questionWithUserId);
                 alert('Question created successfully!');
                 this.$router.push(`/admin/questions/${res._id}`);
             }

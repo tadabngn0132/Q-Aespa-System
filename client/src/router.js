@@ -93,6 +93,11 @@ const routes = [
                 path: '/admin/createtag',
                 name: 'CreateTag',
                 component: () => import('@/views/admin/CreateTag.vue')
+            },
+            {
+                path: '/admin/profile',
+                name: 'AdminProfile',
+                component: () => import('@/views/admin/Profile.vue')
             }
         ]
     },
@@ -114,7 +119,10 @@ const routes = [
             {
                 path: '/student/askquestion',
                 name: 'studentAskQuestion',
-                component: () => import('@/views/student/AskQuestion.vue')
+                component: () => import('@/views/student/AskQuestion.vue'),
+                meta: { 
+                    requiresAuth: true
+                }
             },
             {
                 path: '/student/editquestion',

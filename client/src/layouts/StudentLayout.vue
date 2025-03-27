@@ -24,6 +24,11 @@
                             Tags
                         </router-link>
                     </li>
+                    <li>
+                        <router-link class="router-link" to="/student/profile" exact-active-class="router-link-active">
+                            Profile
+                        </router-link>
+                    </li>
                 </ul>
             </nav>
 
@@ -202,6 +207,7 @@
 
     .student-layout header nav.original-nav {
         display: flex;
+        margin-left: 7.5em;
     }
 
     .auth--nav-icon {
@@ -276,7 +282,7 @@
     }
 
     .student-layout header nav ul li .router-link {
-        padding: 0.8em 1em;
+        padding: 0.8em 1.25em;
         color: var(--secondary-text-color);
         border-bottom: 0.1em solid var(--header-background-color) ;
         transition: all 0.3s ease-in-out;

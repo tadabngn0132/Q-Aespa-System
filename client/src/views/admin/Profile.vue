@@ -1,5 +1,5 @@
 <template>
-    <div class="student-profile">
+    <div class="admin-profile">
         <profile></profile>
     </div>
 </template>
@@ -8,7 +8,7 @@
 import Profile from '@/components/Profile.vue';
 
 export default {
-    name: 'StudentProfile',
+    name: 'AdminProfile',
     components: {
         'profile': Profile
     }

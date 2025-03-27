@@ -7,10 +7,28 @@ const vm = new Vue();
 const handleError = fn => (...params) =>
     fn(...params).catch(error => {
         if (error.response) {
-            vm.flash(`${error.response.status}: ${error.response.statusText}`, 'error');
+            console.error(`${error.response.status}: ${error.response.statusText}`);
+            if (Vue.prototype.$flashMessage) {
+                Vue.prototype.$flashMessage.show(
+                    `${error.response.status}: ${error.response.statusText}`,
+                    'error'
+                );
+            } else {
+                alert(`Error: ${error.response.statusText || 'Unknown error'}`);
+            }
         } else {
-            vm.flash(`Error: ${error.message || 'Unknown error'}`, 'error');
+            console.error(`Error: ${error.message || 'Unknown error'}`);
+            if (Vue.prototype.$flashMessage) {
+                Vue.prototype.$flashMessage.show(
+                    `Error: ${error.message || 'Unknown error'}`,
+                    'error'
+                );
+            } else {
+                alert(`Error: ${error.message || 'Unknown error'}`);
+            }
         }
+
+        throw error;
     });
 
 export const authApi = {
