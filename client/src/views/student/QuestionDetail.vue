@@ -14,7 +14,7 @@
             </div>
             <div v-if="canEditOrDeleteQuestion(question)" class="ud-btn-container">
                 <div class="ud-btn">
-                    <router-link class="edit-btn" :to="{name: 'editQuestion', params: { id: question._id }}">
+                    <router-link class="edit-btn" :to="{name: 'studentEditQuestion', params: { id: question._id }}">
                         <span class="icon">
                             <i class="fa-solid fa-pen-to-square"></i>
                         </span>
@@ -89,6 +89,13 @@
             canEditOrDeleteQuestion(question) {
                 const currentUserId = this.$store.state.auth.userId;
                 return currentUserId && question.userId === currentUserId;
+            },
+            async onDelete(id) {
+                const sure = window.confirm('Do you really want to delete this question?');
+                if (!sure) return;
+                await exportApis.questions.deleteQuestion(id);
+                this.$showMessage.success('Question deleted successfully!');
+                this.$router.push('/student/questions');
             }
         },
         async mounted() {

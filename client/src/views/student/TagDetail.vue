@@ -29,7 +29,7 @@
                     v-for="(questionTag, j) in question.tags"
                     :key="j" 
                     class="question-tags">
-                        <router-link :to="{name: 'tagDetail', params: { id: questionTag._id}}" class="question-tag">
+                        <router-link :to="{name: 'studentTagDetail', params: { id: questionTag._id}}" class="question-tag">
                             {{ questionTag.name }}
                         </router-link>
                     </li>
