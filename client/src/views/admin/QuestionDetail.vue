@@ -8,8 +8,32 @@
         </div>
 
         <div class="asked-modified-date-time">
-            <p>Asked {{ formatDate(question.createdAt) }}</p>
-            <p>Modified {{ formatDate(question.updatedAt) }}</p>
+            <div class="date-time">
+                <p>Asked {{ formatDate(question.createdAt) }}</p>
+                <p>Modified {{ formatDate(question.updatedAt) }}</p>
+            </div>
+            <div v-if="canEditOrDeleteQuestion(question)" class="ud-btn-container">
+                <div class="ud-btn">
+                    <router-link class="edit-btn" :to="{name: 'editQuestion', params: { id: question._id }}">
+                        <span class="icon">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </span>
+                        <span class="text">
+                            Edit
+                        </span>
+                    </router-link>
+                </div>
+                <div class="ud-btn" @click.prevent="onDelete(question._id)">
+                    <a class="delete-btn" :href="`/questions/${question._id}`">
+                        <span class="icon">
+                            <i class="fa-solid fa-trash"></i>
+                        </span>
+                        <span class="text">
+                            Delete
+                        </span>
+                    </a>
+                </div>
+            </div>
         </div>
 
         <div class="question-description">
@@ -58,9 +82,19 @@
             formatDate(timestamp) {
                 return dayjs(timestamp).format('DD/MM/YYYY')
             },
-
             formatRelativeTime(timestamp) {
                 return dayjs(timestamp).fromNow();
+            },
+            canEditOrDeleteQuestion(question) {
+                const currentUserId = this.$store.state.auth.userId;
+                return currentUserId && question.userId === currentUserId;
+            },
+            async onDelete(id) {
+                const sure = window.confirm('Do you really want to delete this question?');
+                if (!sure) return;
+                await exportApis.questions.deleteQuestion(id);
+                this.$showMessage.success('Question deleted successfully!');
+                this.$router.push('/admin/questions');
             }
         },
         async mounted() {
@@ -108,12 +142,22 @@
 
     .admin-question-detail .asked-modified-date-time {
         display: flex;
+        align-items: center;
         gap: 1.5em;
-        font-size: 13.5px;
+        font-size: 14px;
         color: #666;
+        justify-content: space-between;
         margin-bottom: 1.25em;
         padding-bottom: 1em;
         border-bottom: 0.075em solid #e0e0e0;
+    }
+
+    .admin-question-detail .date-time {
+        display: flex;
+        align-items: center;
+        gap: 1.5em;
+        font-size: 14px;
+        color: #666;
     }
 
     .admin-question-detail .asked-modified-date-time p {
@@ -158,6 +202,69 @@
     .admin-question-detail .tags-list .tags .tag:hover {
         background-color: #d0e3f1;
         color: #2c5877;
+    }
+
+    .ud-btn-container {
+        display: flex;
+        gap: 1em;
+        width: max-content;
+        margin-bottom: 0.25em;
+        padding: 0;
+    }
+
+    .ud-btn-container .ud-btn {
+        transition: all 0.3s ease-in-out;
+    }
+
+    .ud-btn-container .edit-btn {
+        background-color: #F9A826;
+        color: #fff;
+        padding: 0.75em 1.25em;
+        border-radius: 0.5em;
+    }
+    .ud-btn-container .edit-btn:hover {
+        background-color: #E8950F;
+    }
+    .ud-btn-container .delete-btn {
+        background-color: #E57373;
+        color: #fff;
+        padding: 0.75em 1.25em;
+        border-radius: 0.5em;
+    }
+    .ud-btn-container .delete-btn:hover {
+        background-color: #D32F2F;
+    }
+    .ud-btn-container .ud-btn
+    span,
+    .ud-btn-container .ud-btn i {
+        color: inherit;
+    }
+    .ud-btn-container
+    span:first-child {
+        margin-right: 0.25em;
+    }
+
+    @media screen and (max-width: 1024px) {        
+        .ud-btn-container .edit-btn,
+        .ud-btn-container .delete-btn {
+            padding: 0.8em 1em;
+            border-radius: 50%;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .ud-btn-container .ud-btn:hover {
+            transform: translateY(-4px);
+        }
+        
+        .ud-btn-container .ud-btn
+        span.text {
+            display: none;
+        }
+
+        .ud-btn-container .ud-btn
+        span:first-child {
+            margin-right: 0;
+        }
     }
 
     @media (max-width: 768px) {

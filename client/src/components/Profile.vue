@@ -21,6 +21,13 @@
                 >
                     Answers
                 </li>
+                <li 
+                    class="category-items"
+                    :class="{ active: activeTab === 'setting' }"
+                    @click="activeTab = 'setting'"
+                >
+                    Setting
+                </li>
             </ul>
         </nav>
 
@@ -50,6 +57,37 @@
                 </ul>
                 <p v-else>You haven't answered any questions yet.</p>
             </div>
+
+            <div v-if="activeTab === 'setting'" class="setting-container">
+                <h2>Setting</h2>
+                <div class="setting-nav-content-container">
+                    <div class="setting-nav">
+                        <nav class="setting-category">
+                            <ul class="setting-list">
+                                <li class="setting-item">
+                                    Information
+                                </li>
+                                <li class="setting-item">
+                                    Change Password
+                                </li>
+                                <li class="setting-item">
+                                    Reset Password
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                    <div class="setting-content">
+                        <div class="content">
+                            <user-form
+                            @editUser="editUser"
+                            :isEditing="true"
+                            :user="currentUser"></user-form>
+                        </div>
+                        <div class="content"></div>
+                        <div class="content"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -57,9 +95,13 @@
 <script>
 import { mapGetters } from 'vuex';
 import exportApis from '@/helpers/api/exportApis';
+import UserForm from './UserForm.vue';
 
 export default {
     name: 'Profile',
+    components: {
+        'user-form': UserForm
+    },
     data() {
         return {
             activeTab: 'questions',
@@ -96,11 +138,56 @@ export default {
                 console.error("Error fetching user answers:", error);
                 this.userAnswers = [];
             }
+        },
+        setActiveSettingItem(index) {
+            const contentSections = document.querySelectorAll('.setting-content .content');
+            contentSections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            const settingItems = document.querySelectorAll('.setting-item');
+            settingItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            settingItems[index].classList.add('active');
+            
+            contentSections[index].classList.add('active');
+        },
+        initializeSettings() {
+            this.setActiveSettingItem(0);
+        },
+        async editUser(user) {
+            console.log('User data:', user);
+            
+            try {
+                const updatedUser = await exportApis.users.updateUser(this.user._id, user);
+                this.$showMessage.success('Uset updated successfully!');
+                this.$router.push(`/admin/users/${updatedUser._id}`);
+            } catch (error) {
+                console.error('Error updating user:', error);
+                    
+                    let errorMessage = 'Failed to update user';
+                    if (error.response && error.response.data && error.response.data.message) {
+                        errorMessage = error.response.data.message;
+                    } else if (error.message) {
+                        errorMessage = error.message;
+                    }
+                    
+                    this.$showMessage.error(errorMessage);
+            }
         }
     },
     created() {
         if (this.currentUser) {
             this.fetchUserQuestions();
+        }
+    },
+    mounted() {
+        if (this.activeTab === 'setting') {
+            this.$nextTick(() => {
+                this.initializeSettings();
+            });
         }
     },
     watch: {
@@ -109,7 +196,11 @@ export default {
                 this.fetchUserQuestions();
             } else if (newTab === 'answers') {
                 this.fetchUserAnswers();
-            }
+            } else if (newTab === 'setting') {
+            this.$nextTick(() => {
+                this.initializeSettings();
+            });
+        }
         },
         currentUser(newUser) {
             if (newUser) {
@@ -268,6 +359,150 @@ export default {
 .answer-item a:hover {
     background-color: #3498db;
     color: white;
+}
+
+.setting-container {
+    animation: fadeIn 0.3s ease-in-out;
+    padding: 10px 0;
+}
+
+.setting-container h2 {
+    font-size: 22px;
+    color: #333;
+    margin-bottom: 20px;
+    border-left: 4px solid #3498db;
+    padding-left: 15px;
+    text-align: left;
+}
+
+.setting-container .setting-nav-content-container {
+    display: flex;
+    width: 100%;
+}
+
+.setting-nav {
+    width: 25%;
+    padding-right: 20px;
+    border-right: 1px solid #e0e0e0;
+}
+
+.setting-content {
+    width: 75%;
+    padding-left: 20px;
+}
+
+.setting-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.setting-item {
+    padding: 12px 15px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    color: #555;
+    font-weight: 500;
+}
+
+.setting-item:hover {
+    background-color: #f5f5f5;
+    color: #3498db;
+}
+
+.setting-item.active {
+    background-color: #e1f0ff;
+    color: #3498db;
+    font-weight: 600;
+}
+
+.content {
+    display: none;
+    animation: fadeIn 0.3s ease-in-out;
+    padding: 15px;
+    background-color: #e1f0ff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.content.active {
+    display: block;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 15px;
+    transition: border 0.3s;
+}
+
+.form-group input:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.btn-save {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-save:hover {
+    background-color: #2980b9;
+}
+
+.btn-cancel {
+    background-color: #f2f2f2;
+    color: #555;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-right: 10px;
+    transition: background-color 0.3s;
+}
+
+.btn-cancel:hover {
+    background-color: #e0e0e0;
+}
+
+@media (max-width: 768px) {
+    .setting-nav-content-container {
+        flex-direction: row;
+    }
+    
+    .setting-nav {
+        margin-bottom: 20px;
+        padding-right: 0;
+        border-right: none;
+        padding-bottom: 10px;
+    }
+    
+    .setting-content {
+        padding-left: 0;
+    }
 }
 
 @keyframes fadeIn {
