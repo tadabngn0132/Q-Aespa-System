@@ -7,6 +7,9 @@ module.exports = app => {
     app
         .route('/login')
         .post(AuthBuilder.loginUser);
+    app
+        .route('/changepassword/:userId')
+        .put(AuthBuilder.changePassword)
     app 
         .route('/users')
         .get(UserBuilder.list_all_users)

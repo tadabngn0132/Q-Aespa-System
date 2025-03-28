@@ -29,7 +29,7 @@
                 const userId = this.$store.state.auth.userId;
 
                 if (!userId) {
-                    alert('You need login to ask question.');
+                    this.$showMessage.warning('You need login to ask question.');
                     return;
                 }
 

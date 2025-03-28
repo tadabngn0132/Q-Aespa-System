@@ -76,7 +76,7 @@ export default {
             const userId = this.$store.state.auth.userId;
 
             if (!userId) {
-                alert('You must be logged in to create or edit answers');
+                this.$showMessage.warning('You must be logged in to create or edit answers');
                 return;
             }
 
@@ -114,6 +114,7 @@ export default {
             if (sure) {
                 try {
                     await exportApis.answers.deleteAnswer(this.question._id, answerId);
+                    this.$showMessage.success('Answer deleted successfully!');
                     this.answers = await exportApis.answers.getAnswers(this.question._id);
                     this.answerCount = this.answers.length;
                 } catch  (error) {

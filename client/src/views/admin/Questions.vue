@@ -81,7 +81,7 @@
                 const sure = window.confirm('Do you really want to delete this question?');
                 if (!sure) return;
                 await exportApis.questions.deleteQuestion(id);
-                alert('Question deleted successfully!');
+                this.$showMessage.success('Question deleted successfully!');
                 const newQuestions = this.questions.filter(question => question._id !== id);
                 this.questions = newQuestions;
                 this.questionCount = this.questions.length;

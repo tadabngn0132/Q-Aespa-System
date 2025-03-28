@@ -1,6 +1,7 @@
 import exportApis from "@/helpers/api/exportApis";
 import apiClient from "@/helpers/api/apiClient";
 import router from '@/router';
+import Vue from "vue";
 
 const state = {
     token: localStorage.getItem('token') || null,
@@ -145,6 +146,7 @@ const actions = {
             }
         } catch (error) {
             commit('SET_ERROR', error.message || 'Login failed');
+            Vue.$toast.error(error.message || 'Invalid credentials. Please try again.');
             throw error;
         } finally {
             commit('SET_LOADING', false);
@@ -205,6 +207,12 @@ const actions = {
     },
 
     logout({ commit }) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('userRole');
+        localStorage.removeItem('userData');
+        localStorage.removeItem('tokenExpiration');
+        
         apiClient.clearToken();
         commit('CLEAR_AUTH');
 

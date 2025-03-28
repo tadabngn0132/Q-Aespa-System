@@ -64,14 +64,15 @@
                     <div class="setting-nav">
                         <nav class="setting-category">
                             <ul class="setting-list">
-                                <li class="setting-item">
+                                <li class="setting-item" 
+                                    :class="{ active: activeSettingTab === 0 }"
+                                    @click="setActiveSettingItem(0)">
                                     Information
                                 </li>
-                                <li class="setting-item">
+                                <li class="setting-item"
+                                    :class="{ active: activeSettingTab === 1 }"
+                                    @click="setActiveSettingItem(1)">
                                     Change Password
-                                </li>
-                                <li class="setting-item">
-                                    Reset Password
                                 </li>
                             </ul>
                         </nav>
@@ -81,10 +82,11 @@
                             <user-form
                             @editUser="editUser"
                             :isEditing="true"
-                            :user="currentUser"></user-form>
+                            :user="{name: currentUser.name, email: currentUser.email}"></user-form>
                         </div>
-                        <div class="content"></div>
-                        <div class="content"></div>
+                        <div class="content">
+                            <change-password></change-password>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -96,15 +98,18 @@
 import { mapGetters } from 'vuex';
 import exportApis from '@/helpers/api/exportApis';
 import UserForm from './UserForm.vue';
+import ChangePasswordForm from './ChangePasswordForm.vue';
 
 export default {
     name: 'Profile',
     components: {
-        'user-form': UserForm
+        'user-form': UserForm,
+        'change-password': ChangePasswordForm
     },
     data() {
         return {
             activeTab: 'questions',
+            activeSettingTab: 0,
             userQuestions: [],
             userAnswers: []
         }
@@ -140,6 +145,8 @@ export default {
             }
         },
         setActiveSettingItem(index) {
+            this.activeSettingTab = index;
+            
             const contentSections = document.querySelectorAll('.setting-content .content');
             contentSections.forEach(section => {
                 section.classList.remove('active');
@@ -161,9 +168,14 @@ export default {
             console.log('User data:', user);
             
             try {
-                const updatedUser = await exportApis.users.updateUser(this.user._id, user);
-                this.$showMessage.success('Uset updated successfully!');
-                this.$router.push(`/admin/users/${updatedUser._id}`);
+                await exportApis.users.updateUser(this.currentUser.userId, user);
+                this.$showMessage.success('User updated successfully!');
+                
+                this.$store.commit('auth/SET_USER', {
+                    ...this.currentUser,
+                    name: user.name,
+                    email: user.email
+                });
             } catch (error) {
                 console.error('Error updating user:', error);
                     

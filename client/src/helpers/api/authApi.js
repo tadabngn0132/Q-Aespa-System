@@ -7,7 +7,9 @@ const handleError = fn => (...params) =>
         let errorMessage = 'An unknown error occurred';
         
         if (error.response) {
-            if (error.response.data && error.response.data.message) {
+            if (error.response.status === 401) {
+                errorMessage = 'Invalid email or password. Please try again.';
+            } else if (error.response.data && error.response.data.message) {
                 errorMessage = error.response.data.message;
             } else {
                 errorMessage = `${error.response.status}: ${error.response.statusText}`;
@@ -16,10 +18,13 @@ const handleError = fn => (...params) =>
             errorMessage = error.message;
         }
         
-        console.error('API Error:', error);
+        console.error('API Error:', errorMessage);
         
-        Vue.$toast.error(errorMessage);
+        if (Vue && Vue.$toast) {
+            Vue.$toast.error(errorMessage);
+        }
         
+        error.userMessage = errorMessage;
         throw error;
     });
 
@@ -38,13 +43,15 @@ export const authApi = {
         
         return res.data;
     }),
-
     logout: () => {
         apiClient.clearToken();
         return true;
     },
-
     isAuthenticated: () => {
         return !!apiClient.getToken();
-    }
+    },
+    changePassword: handleError(async (userId, currentPassword, newPassword) => {
+        const res = await apiClient.changePassword.put(`${userId}`, {currentPassword, newPassword});
+        return res.data;
+    })
 };

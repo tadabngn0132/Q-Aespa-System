@@ -51,3 +51,41 @@ exports.loginUser = async (req, res) => {
             message: error.message });
     }
 };
+
+exports.changePassword = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { currentPassword, newPassword } = req.body;
+
+        const updatedUser = await AuthService.changePassword(userId, currentPassword, newPassword);
+
+        res.status(200).json({
+            success: true,
+            message: 'Password changed successfully',
+            user: updatedUser
+        });
+
+    } catch (error) {
+        console.error('Error changing password:', error);
+
+        if (error.message === 'User not found!') {
+            return res.status(404).json({ 
+                success: false, 
+                message: 'User not found' 
+            });
+        }
+
+        if (error.message === 'Wrong current password!') {
+            return res.status(401).json({ 
+                success: false, 
+                message: 'Current password is incorrect' 
+            });
+        }
+
+        res.status(500).json({
+            success: false,
+            message: 'Failed to change password',
+            error: error.message
+        });
+    }
+};

@@ -106,8 +106,13 @@ export default {
                     password: this.inputs.password
                 });
             } catch (error) {
-                console.error('Login failed:', error);
-                this.$showMessage.error('Login failed');
+                console.error('Login failed:', error.userMessage || 'Invalid credentials');
+
+                if (!error.userMessage) {
+                    this.$showMessage.error('Invalid email or password. Please try again.');
+                }
+
+                this.errors.password = ['Invalid email or password. Please try again.'];
             }
         }
     }

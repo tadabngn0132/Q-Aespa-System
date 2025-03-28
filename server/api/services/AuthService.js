@@ -73,3 +73,28 @@ exports.loginUser = async (email, enteredPassword) => {
         }
     };
 };
+
+exports.changePassword = async (userId, currentPassword, newPassword) => {
+    const user = User.findOne({ userId });
+
+    if (!user) {
+        throw new Error('User not found!');
+    }
+    
+    const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isPasswordValid) {
+        throw new Error('Wrong current password!');
+    }
+
+    const hashedNewPassword = this.hashPassword(newPassword);
+
+    const updateData = {
+        password: hashedNewPassword
+    }
+
+    return await User.findByIdAndUpdate(
+        userId,
+        updateData,
+        { new: true }
+    ).select('-password');
+};

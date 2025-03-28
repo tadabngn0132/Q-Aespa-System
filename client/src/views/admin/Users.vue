@@ -68,7 +68,7 @@ export default {
             const sure = window.confirm('Do you really want to delete this user!');
             if (!sure) return;
             await exportApis.users.deleteUser(id);
-            alert('User deleted successfully!');
+            this.$showMessage.success('User deleted successfully!');
             const newUsers = this.users.filter(user => user._id !== id);
             this.users = newUsers;
         }

@@ -163,7 +163,8 @@ export default {
             handler(newVal) {
                 this.formData.name = newVal.name;
                 this.formData.email = newVal.email;
-            }
+            },
+            immediate: true
         }
     }
 }

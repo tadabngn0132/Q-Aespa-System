@@ -40,14 +40,6 @@ import exportApis from '@/helpers/api/exportApis';
                     return description.substring(0, 125) + '...';
                 }
                 return description;
-            },
-            async onDelete(id) {
-                const sure = window.confirm('Do you really want to delete this tag?');
-                if (!sure) return;
-                await exportApis.tags.deleteTag(id);
-                alert('Tag deleted successfully!');
-                const newTags = this.tags.filter(tag => tag._id !== id);
-                this.tags = newTags;
             }
         },
         async mounted() {
