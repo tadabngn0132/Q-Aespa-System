@@ -47,15 +47,6 @@
                     this.$router.push(`/admin/questions/${question._id}`)
                 } catch (error) {
                     console.error('Error updating question:', error);
-                    
-                    let errorMessage = 'Failed to update question';
-                    if (error.response && error.response.data && error.response.data.message) {
-                        errorMessage = error.response.data.message;
-                    } else if (error.message) {
-                        errorMessage = error.message;
-                    }
-                    
-                    this.$showMessage.error(errorMessage);
                 }
             }
         }

@@ -82,7 +82,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters('auth', 'userId'),
+        ...mapGetters('auth', ['userId']),
         passwordsMatch() {
             return !this.passwordData.newPassword || 
                 !this.passwordData.confirmPassword || 

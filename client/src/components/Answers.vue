@@ -98,15 +98,6 @@ export default {
                 this.editingAnswer = {};
             } catch (error) {
                 console.error('Error handling answer:', error);
-                    
-                let errorMessage = 'Failed to handle answer';
-                if (error.response && error.response.data && error.response.data.message) {
-                    errorMessage = error.response.data.message;
-                } else if (error.message) {
-                    errorMessage = error.message;
-                }
-                
-                this.$showMessage.error(errorMessage);
             }
         },
         async deleteAnswer(answerId) {
@@ -119,7 +110,6 @@ export default {
                     this.answerCount = this.answers.length;
                 } catch  (error) {
                     console.error('Error deleting answer:', error);
-                    alert(`Error: ${error.response ? error.response.data.message : 'Could not delete the answer'}`);
                 }
             }
         },

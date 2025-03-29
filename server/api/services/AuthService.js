@@ -75,7 +75,7 @@ exports.loginUser = async (email, enteredPassword) => {
 };
 
 exports.changePassword = async (userId, currentPassword, newPassword) => {
-    const user = User.findOne({ userId });
+    const user = User.findById(userId);
 
     if (!user) {
         throw new Error('User not found!');
@@ -86,7 +86,7 @@ exports.changePassword = async (userId, currentPassword, newPassword) => {
         throw new Error('Wrong current password!');
     }
 
-    const hashedNewPassword = this.hashPassword(newPassword);
+    const hashedNewPassword = await this.hashPassword(newPassword);
 
     const updateData = {
         password: hashedNewPassword

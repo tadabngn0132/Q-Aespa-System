@@ -2,12 +2,9 @@ const mongoose = require('mongoose');
 const Answer = mongoose.model('Answer');
 
 const answerService = {
-    getAnswersByQuestionId: async (questionId, page = 1, limit = 10) => {
-        const skip = (page - 1) * limit;
+    getAnswersByQuestionId: async (questionId) => {
         return await Answer.find({ questionId: questionId })
-            .sort({ createdAt: -1 })
-            .skip(skip)
-            .limit(limit);
+            .sort({ createdAt: -1 });
     },
 
     getAnswerById: async (answerId) => {

@@ -2,9 +2,7 @@ const questionService = require('../services/QuestionService');
 
 exports.list_all_questions = async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 10;
-        const questions = await questionService.getAllQuestions(page, limit);
+        const questions = await questionService.getAllQuestions();
         res.json(questions);
     } catch (err) {
         res.status(500).send({ message: err.message });

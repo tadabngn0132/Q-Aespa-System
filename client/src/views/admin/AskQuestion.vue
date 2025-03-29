@@ -44,15 +44,6 @@
                     this.$router.push(`/admin/questions/${res._id}`);
                 } catch (error) {
                     console.error('Error creating question:', error);
-                    
-                    let errorMessage = 'Failed to create question';
-                    if (error.response && error.response.data && error.response.data.message) {
-                        errorMessage = error.response.data.message;
-                    } else if (error.message) {
-                        errorMessage = error.message;
-                    }
-                    
-                    this.$showMessage.error(errorMessage);
                 }
             }
         }

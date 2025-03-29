@@ -50,8 +50,11 @@ export const authApi = {
     isAuthenticated: () => {
         return !!apiClient.getToken();
     },
-    changePassword: handleError(async (userId, currentPassword, newPassword) => {
-        const res = await apiClient.changePassword.put(`${userId}`, {currentPassword, newPassword});
+    changePassword: handleError(async (userId, passwordData) => {
+        const res = await apiClient.changePassword.put(`${userId}`, {
+            currentPassword: passwordData.currentPassword, 
+            newPassword: passwordData.newPassword
+        });
         return res.data;
     })
 };

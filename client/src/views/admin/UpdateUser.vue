@@ -30,15 +30,6 @@ export default {
                 this.$router.push(`/admin/users/${updatedUser._id}`);
             } catch (error) {
                 console.error('Error updating user:', error);
-                    
-                    let errorMessage = 'Failed to update user';
-                    if (error.response && error.response.data && error.response.data.message) {
-                        errorMessage = error.response.data.message;
-                    } else if (error.message) {
-                        errorMessage = error.message;
-                    }
-                    
-                    this.$showMessage.error(errorMessage);
             }
         }
     },

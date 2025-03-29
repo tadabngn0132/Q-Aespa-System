@@ -2,12 +2,9 @@ const mongoose = require('mongoose');
 const Tag = mongoose.model('Tag');
 
 const tagService = {
-    getAllTags: async (page = 1, limit = 20) => {
-        const skip = (page - 1) * limit;
+    getAllTags: async () => {
         return await Tag.find({})
-            .sort({ createdAt: 1 })
-            .skip(skip)
-            .limit(limit);
+            .sort({ createdAt: 1 });
     },
 
     getTagById: async (tagId) => {

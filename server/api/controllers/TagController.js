@@ -2,9 +2,7 @@ const tagService = require('../services/TagService');
 
 exports.list_all_tags = async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 20;
-        const tags = await tagService.getAllTags(page, limit);
+        const tags = await tagService.getAllTags();
         res.json(tags);
     } catch (err) {
         res.status(500).send({ message: err.message });

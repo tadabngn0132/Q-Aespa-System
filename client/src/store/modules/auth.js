@@ -162,7 +162,7 @@ const actions = {
             
             commit('SET_LOADING', true);
             
-            const userProfile = await exportApis.auths.getUser(state.userId);
+            const userProfile = await exportApis.users.getUser(state.userId);
 
             if (userProfile) {
                 commit('SET_USER', userProfile);
@@ -216,7 +216,7 @@ const actions = {
         apiClient.clearToken();
         commit('CLEAR_AUTH');
 
-        if (router.currentRoute.path !== '/student') {
+        if (!router.currentRoute.path.startsWith('/student')) {
             router.push('/student');
         }
     },
@@ -274,11 +274,9 @@ const actions = {
             }
             
             if (saveUserId) {
-                try {
-                    await dispatch('fetchUserProfile');
-                } catch (error) {
-                    console.warn('Error fetching user profile, but keeping session active:', error);
-                }
+                dispatch('fetchUserProfile').catch(error => {
+                    console.warn('Failed to fetch updated user profile:', error);
+                });
             }
         } catch (error) {
             console.error('Error in checkAuthState:', error);

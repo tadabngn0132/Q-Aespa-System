@@ -4,15 +4,16 @@ const answerController = {
     listAllAnswersOfQuestion: async (req, res) => {
         try {
             const { questionId } = req.params;
-            const page = parseInt(req.query.page) || 1;
-            const limit = parseInt(req.query.limit) || 10;
 
-            const answers = await answerService.getAnswersByQuestionId(questionId, page, limit);
+            const answers = await answerService.getAnswersByQuestionId(questionId);
             
             return res.status(200).json(answers);
         } catch (error) {
             console.error('Error getting answers:', error);
-            return res.status(500).json({ success: false, message: error.message });
+            return res.status(error.status || 500).json({ 
+                success: false, 
+                message: error.message || 'Internal server error' 
+            });
         }
     },
 
@@ -21,9 +22,12 @@ const answerController = {
             const { userId } = req.params;
             const answers = await answerService.getAnswersByUserId(userId);
             return res.status(200).json(answers);
-        } catch (err) {
-            console.error({ message: err.message });
-            return res.status(500).json({ success: false, message: err.message })
+        } catch (error) {
+            console.error('Error getting user answers:', error);
+            return res.status(error.status || 500).json({ 
+                success: false, 
+                message: error.message || 'Internal server error' 
+            });
         }
     },
 
@@ -35,7 +39,10 @@ const answerController = {
             return res.status(200).json(answer);
         } catch (error) {
             console.error('Error getting answer:', error);
-            return res.status(404).json({ success: false, message: error.message});
+            return res.status(error.status || 404).json({ 
+                success: false, 
+                message: error.message || 'Answer not found' 
+            });
         }
     },
 
@@ -53,9 +60,9 @@ const answerController = {
             return res.status(201).json(newAnswer);
         } catch (error) {
             console.error('Error creating answer:', error);
-            return res.status(400).json({
+            return res.status(error.status || 400).json({
                 success: false,
-                message: error.message
+                message: error.message || 'Bad request'
             });
         }
     },
@@ -74,7 +81,10 @@ const answerController = {
             return res.status(200).json(updatedAnswer);
         } catch (error) {
             console.error('Error updating answer:', error);
-            return res.status(400).json({ success: false, message: error.message});
+            return res.status(error.status || 400).json({ 
+                success: false, 
+                message: error.message || 'Bad request' 
+            });
         }
     },
 
@@ -83,12 +93,16 @@ const answerController = {
             const { answerId } = req.params;
             const deletedId = await answerService.deleteAnswer(answerId);
 
-            return res.status(200).json(deletedId);
+            return res.status(200).json({
+                success: true,
+                message: 'Answer deleted successfully',
+                _id: deletedId
+            });
         } catch (error) {
             console.error('Error deleting answer:', error);
-            return res.status(400).json({
+            return res.status(error.status || 400).json({
                 success: false,
-                message: error.message
+                message: error.message || 'Bad request'
             });
         }
     }

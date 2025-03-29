@@ -17,7 +17,11 @@ const handleError = fn => (...params) =>
         
         console.error('API Error:', error);
         
-        Vue.$toast.error(errorMessage);
+        if (Vue.$toast) {
+            Vue.$toast.error(errorMessage);
+        }
+        
+        error.userMessage = errorMessage;
         
         throw error;
     });

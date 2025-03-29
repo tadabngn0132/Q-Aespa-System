@@ -6,13 +6,10 @@ require('../models/AnswerModel');
 const Answer = mongoose.model('Answer');
 
 const questionService = {
-    getAllQuestions: async (page = 1, limit = 10) => {
-        const skip = (page - 1) * limit;
+    getAllQuestions: async () => {
         return await Question.find({})
             .populate('tags', 'name _id')
-            .sort({ createdAt: -1 })
-            .skip(skip)
-            .limit(limit);
+            .sort({ createdAt: -1 });
     },
 
     getQuestionById: async (questionId) => {
@@ -24,21 +21,9 @@ const questionService = {
     },
 
     getQuestionsByTagId: async (tagId) => {
-        const questions = await Question.find({}).populate('tags', 'name _id');
-        let questionsIncludeTag = [];
-
-        for (const question of questions) {
-            if (question.tags && Array.isArray(question.tags)) {
-                const hasTag = question.tags.some(tag =>
-                    tag._id.toString() === tagId
-                );
-
-                if (hasTag) {
-                    questionsIncludeTag.push(question);
-                }
-            }
-        }
-        return questionsIncludeTag;
+        return await Question.find({ tags: tagId })
+                .populate('tags', 'name _id')
+                .sort({ createdAt: -1 });
     },
 
     getQuestionByUserId: async (userId) => {

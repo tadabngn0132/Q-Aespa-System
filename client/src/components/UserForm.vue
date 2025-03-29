@@ -77,6 +77,29 @@
                 </li>
             </ul>
 
+            <label class="role">
+                Role
+                <span class="require">
+                    *
+                </span>
+            </label>
+
+            <div class="role-choice">
+                <input 
+                type="radio" 
+                name="role" 
+                id="admin-role" 
+                value="admin">
+                <span class="role-name">Admin</span>
+    
+                <input 
+                type="radio" 
+                name="role" 
+                id="student-role" 
+                value="student">
+                <span class="role-name">Student</span>
+            </div>
+
             <button type="submit">
                 Submit
             </button>
@@ -211,7 +234,9 @@ export default {
     margin-left: 3px;
 }
 
-.user-form input {
+.user-form input.name-input,
+.user-form input.email,
+.user-form input.password {
     width: 100%;
     padding: 0.75rem 1rem;
     margin-bottom: 1rem;
@@ -238,6 +263,10 @@ export default {
     color: #e53e3e;
     font-size: 0.85rem;
     margin-bottom: 0.25rem;
+}
+
+.role-choice {
+    display: flex;
 }
 
 .user-form button {

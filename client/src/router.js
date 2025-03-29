@@ -164,22 +164,20 @@ router.beforeEach((to, from, next) => {
     const isAuthenticated = store.getters['auth/isAuthenticated'];
     const userRole = store.getters['auth/userRole'];
 
-    const requiresAdmin = to.matched.some(record => record.meta.adminOnly);
+    if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
+        return next('/login');
+    }
+
+    if (to.matched.some(record => record.meta.adminOnly) && userRole !== 'admin') {
+        return next('/student');
+    }
 
     if ((to.path === '/login' || to.path === '/register') && isAuthenticated) {
         if (userRole === 'admin') {
             return next('/admin');
-        } else if (userRole === 'student') {
-            return next('student');
+        } else {
+            return next('/student');
         }
-    }
-
-    if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
-        return next('/student');
-    }
-
-    if (requiresAdmin && userRole !== 'admin') {
-        return next('/student');
     }
 
     next();

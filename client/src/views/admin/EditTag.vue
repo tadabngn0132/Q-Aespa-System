@@ -28,15 +28,6 @@ import exportApis from '@/helpers/api/exportApis';
                     this.$router.push(`/admin/tags/${tag._id}`);
                 } catch (error) {
                     console.error('Error updating tag:', error);
-                    
-                    let errorMessage = 'Failed to update tag';
-                    if (error.response && error.response.data && error.response.data.message) {
-                        errorMessage = error.response.data.message;
-                    } else if (error.message) {
-                        errorMessage = error.message;
-                    }
-                    
-                    this.$showMessage.error(errorMessage);
                 }
             }
         },

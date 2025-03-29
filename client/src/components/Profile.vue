@@ -146,23 +146,9 @@ export default {
         },
         setActiveSettingItem(index) {
             this.activeSettingTab = index;
-            
-            const contentSections = document.querySelectorAll('.setting-content .content');
-            contentSections.forEach(section => {
-                section.classList.remove('active');
-            });
-            
-            const settingItems = document.querySelectorAll('.setting-item');
-            settingItems.forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            settingItems[index].classList.add('active');
-            
-            contentSections[index].classList.add('active');
         },
         initializeSettings() {
-            this.setActiveSettingItem(0);
+            this.activeSettingTab = 0;
         },
         async editUser(user) {
             console.log('User data:', user);
@@ -197,10 +183,8 @@ export default {
     },
     mounted() {
         if (this.activeTab === 'setting') {
-            this.$nextTick(() => {
-                this.initializeSettings();
-            });
-        }
+            this.initializeSettings();
+        };
     },
     watch: {
         activeTab(newTab) {
@@ -209,10 +193,8 @@ export default {
             } else if (newTab === 'answers') {
                 this.fetchUserAnswers();
             } else if (newTab === 'setting') {
-            this.$nextTick(() => {
                 this.initializeSettings();
-            });
-        }
+            }
         },
         currentUser(newUser) {
             if (newUser) {

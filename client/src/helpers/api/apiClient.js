@@ -37,6 +37,18 @@ const createApiClient = (path) => {
         error => Promise.reject(error)
     );
 
+    client.interceptors.response.use(
+        response => response,
+        error => {
+            if (error.response && error.response.status === 401) {
+                store.dispatch('auth/logout');
+                router.push('/login');
+                Vue.$toast.error('Your session has expired. Please login again.');
+            }
+            return Promise.reject(error);
+        }
+    );
+
     return client;
 };
 
