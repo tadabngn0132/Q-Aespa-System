@@ -8,14 +8,36 @@
             {{ answerCount }} answer
         </span>
         
+        <div v-if="isLoading" class="loading-container">
+            <div class="loading-spinner"></div>
+            <p>Loading answers...</p>
+        </div>
         
         <ul 
-            v-if="answers.length > 0" 
+            v-else-if="answers.length > 0" 
             class="answers-list">
                 <li
                 v-for="(answer, i) in answers"
                 :key="i" 
                 class="answers">
+                <div class="answer-title">
+                    <div class="user-infor">
+                        <span class="user-name" v-if="answer.userId && answer.userId.name">
+                            {{ answer.userId.name }}
+                        </span>
+                        <span class="user-email" v-if="answer.userId && answer.userId.email">
+                            {{ answer.userId.email }}
+                        </span>
+                    </div>
+                    <span 
+                    v-if="answer.createdAt === answer.updatedAt" 
+                    class="createdTime">
+                        {{ 'answered at ' + formatDate(answer.createdAt) }}
+                    </span>
+                    <span v-else class="updatedTime">
+                        {{ 'modified at ' + formatDate(answer.updatedAt) }}
+                    </span>
+                </div>
                 <span class="answer-description">
                     {{ answer.description }}
                 </span>
@@ -26,9 +48,11 @@
             </li>
         </ul>
 
-    <answer-form
-    @createOrUpdate="createOrUpdate"
-    :answer="editingAnswer"></answer-form>
+        <p v-else-if="!isLoading" class="no-answers">No answers yet. Be the first to answer!</p>
+
+        <answer-form
+        @createOrUpdate="createOrUpdate"
+        :answer="editingAnswer"></answer-form>
     </div>
 </template>
 
@@ -36,6 +60,7 @@
 import exportApis from '@/helpers/api/exportApis';
 import AnswerForm from './AnswerForm.vue';
 import { mapGetters } from 'vuex';
+import dayjs from 'dayjs';
 
 export default {
     name: 'Answers',
@@ -48,12 +73,7 @@ export default {
             required: true,
             default: () => {
                 return {
-                    _id: '',
-                    title: '',
-                    description: '',
-                    createdAt: '',
-                    updatedAt: '',
-                    tags: []
+                    _id: ''
                 }
             }
         }
@@ -65,7 +85,8 @@ export default {
         return {
             answers: [],
             answerCount: 0,
-            editingAnswer: {}
+            editingAnswer: {},
+            isLoading: false
         }
     },
     methods: {
@@ -85,31 +106,54 @@ export default {
                 userId: userId
             };
 
+            this.isLoading = true;
+
             try {
                 if (answer._id) {
                     await exportApis.answers.updateAnswer(this.question._id, answer._id, answerwithUserId);
-                    this.$showMessage.success('Answer updated successfully!');
+                    setTimeout(() => {
+                        this.$showMessage.success('Answer updated successfully!');
+                        this.refreshAnswers();
+                    }, 500);
                 } else {
                     await exportApis.answers.createAnswer(this.question._id, answerwithUserId);
-                    this.$showMessage.success('Answer created successfully!');
+                    setTimeout(() => {
+                        this.$showMessage.success('Answer created successfully!');
+                        this.refreshAnswers();
+                    }, 500);
                 }
+            } catch (error) {
+                console.error('Error handling answer:', error);
+                this.isLoading = false;
+                this.$showMessage.error('Error handling answer. Please try again.');
+            }
+        },
+        async refreshAnswers() {
+            try {
                 this.answers = await exportApis.answers.getAnswers(this.question._id);
                 this.answerCount = this.answers.length;
                 this.editingAnswer = {};
             } catch (error) {
-                console.error('Error handling answer:', error);
+                console.error('Error refreshing answers:', error);
+                this.$showMessage.error('Error refreshing answers. Please reload the page.');
+            } finally {
+                this.isLoading = false;
             }
         },
         async deleteAnswer(answerId) {
             const sure = window.confirm('Do you really want to delete this answer?');
             if (sure) {
+                this.isLoading = true;
                 try {
                     await exportApis.answers.deleteAnswer(this.question._id, answerId);
-                    this.$showMessage.success('Answer deleted successfully!');
-                    this.answers = await exportApis.answers.getAnswers(this.question._id);
-                    this.answerCount = this.answers.length;
-                } catch  (error) {
+                    setTimeout(() => {
+                        this.$showMessage.success('Answer deleted successfully!');
+                        this.refreshAnswers();
+                    }, 500);
+                } catch (error) {
                     console.error('Error deleting answer:', error);
+                    this.isLoading = false;
+                    this.$showMessage.error('Error deleting answer. Please try again.');
                 }
             }
         },
@@ -119,7 +163,15 @@ export default {
             }
 
             const currentUserId = this.$store.state.auth.userId;
+            
+            if (answer.userId && typeof answer.userId === 'object') {
+                return currentUserId && answer.userId._id === currentUserId;
+            }
+            
             return currentUserId && answer.userId === currentUserId;
+        },
+        formatDate(timestamp) {
+            return dayjs(timestamp).format('DD/MM/YYYY HH:mm')
         }
     },
     watch: {
@@ -127,8 +179,18 @@ export default {
             immediate: true,
             async handler(newId) {
                 if (newId) {
-                    this.answers = await exportApis.answers.getAnswers(newId);
-                    this.answerCount = this.answers.length;
+                    this.isLoading = true;
+                    try {
+                        setTimeout(async () => {
+                            this.answers = await exportApis.answers.getAnswers(newId);
+                            this.answerCount = this.answers.length;
+                            this.isLoading = false;
+                        }, 500);
+                    } catch (error) {
+                        console.error('Error fetching answers:', error);
+                        this.isLoading = false;
+                        this.$showMessage.error('Error fetching answers. Please reload the page.');
+                    }
                 }
             }
         }
@@ -156,6 +218,30 @@ export default {
     padding-bottom: 8px;
 }
 
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    margin: 1rem 0;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 .answers-list {
     list-style: none;
     padding: 0;
@@ -170,8 +256,8 @@ export default {
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
     position: relative;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column; 
+    gap: 10px;              
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     border-left: 4px solid #3498db;
 }
@@ -181,16 +267,58 @@ export default {
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
 }
 
+.answer-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eaeaea;
+    width: 100%;
+}
+
+.user-infor {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.user-name {
+    font-weight: 600;
+    color: #2980b9;
+    font-size: 15px;
+}
+
+.user-email {
+    color: #7f8c8d;
+    font-size: 13px;
+    font-style: italic;
+}
+
+.createdTime, .updatedTime {
+    font-size: 13px;
+    color: #95a5a6;
+    display: flex;
+    align-items: center;
+}
+
+.updatedTime {
+    color: #3498db;
+}
+
 .answer-description {
     flex: 1;
     word-break: break-word;
     line-height: 1.5;
+    font-size: 15px;
+    margin: 10px 0;
 }
 
 .ud-btn {
     display: flex;
     gap: 8px;
-    margin-left: 15px;
+    margin-left: auto;
+    margin-top: 8px;
 }
 
 .edit-btn, .delete-btn {
@@ -224,32 +352,39 @@ export default {
     color: white;
 }
 
+.no-answers {
+    text-align: center;
+    padding: 2rem;
+    color: #7f8c8d;
+    font-style: italic;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    margin: 1rem 0;
+}
+
 @media (max-width: 768px) {
     .answers {
-        flex-direction: column;
-        align-items: flex-start;
         padding: 15px;
+    }
+    
+    .answer-title {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .createdTime, .updatedTime {
+        align-self: flex-start;
     }
     
     .ud-btn {
         margin-top: 15px;
-        margin-left: 0;
         width: 100%;
+        justify-content: center;
     }
     
     .edit-btn, .delete-btn {
         flex: 1;
         text-align: center;
     }
-}
-
-/* Adding styles for AnswerForm component integration */
-answer-form {
-    margin-top: 30px;
-    display: block;
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 </style>

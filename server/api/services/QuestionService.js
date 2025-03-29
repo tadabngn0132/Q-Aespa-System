@@ -9,20 +9,24 @@ const questionService = {
     getAllQuestions: async () => {
         return await Question.find({})
             .populate('tags', 'name _id')
+            .populate('userId', 'name email')
             .sort({ createdAt: -1 });
     },
 
     getQuestionById: async (questionId) => {
-        const question = await Question.findById(questionId);
+        const question = await Question.findById(questionId)
+            .populate('tags', 'name _id')
+            .populate('userId', 'name email');
         if (!questionId) {
             throw new Error('Question not found');
         }
-        return await question.populate('tags', 'name _id');
+        return question;
     },
 
     getQuestionsByTagId: async (tagId) => {
         return await Question.find({ tags: tagId })
                 .populate('tags', 'name _id')
+                .populate('userId', 'name email')
                 .sort({ createdAt: -1 });
     },
 

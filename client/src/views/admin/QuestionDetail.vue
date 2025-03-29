@@ -1,61 +1,85 @@
 <template>
     <div class="admin-question-detail">
-        <div class="question-title-create-btn">
-            <h1>{{ question.title }}</h1>
-            <router-link class="create-btn" :to="{name: 'askQuestion'}">
-                Ask Question
-            </router-link>
+        <div v-if="isLoading" class="loading-container">
+            <div class="loading-spinner"></div>
+            <p>Loading question details...</p>
         </div>
-
-        <div class="asked-modified-date-time">
-            <div class="date-time">
-                <p>Asked {{ formatDate(question.createdAt) }}</p>
-                <p>Modified {{ formatDate(question.updatedAt) }}</p>
-            </div>
-            <div v-if="canEditOrDeleteQuestion(question)" class="ud-btn-container">
-                <div class="ud-btn">
-                    <router-link class="edit-btn" :to="{name: 'editQuestion', params: { id: question._id }}">
-                        <span class="icon">
-                            <i class="fa-solid fa-pen-to-square"></i>
-                        </span>
-                        <span class="text">
-                            Edit
-                        </span>
-                    </router-link>
-                </div>
-                <div class="ud-btn" @click.prevent="onDelete(question._id)">
-                    <a class="delete-btn" :href="`/questions/${question._id}`">
-                        <span class="icon">
-                            <i class="fa-solid fa-trash"></i>
-                        </span>
-                        <span class="text">
-                            Delete
-                        </span>
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div class="question-description">
-            {{ question.description }}
-        </div>
-
-        <ul class="tags-list" v-if="question.tags && question.tags.length > 0">
-            <li class="tags" v-for="(tag, i) in question.tags" :key="i">
-                <router-link :to="{ name: 'tagDetail', params: { id: tag._id }}" class="tag">
-                    {{ tag.name }}
+        
+        <div v-else>
+            <div class="question-title-create-btn">
+                <h1>{{ question.title }}</h1>
+                <router-link class="create-btn" :to="{name: 'askQuestion'}">
+                    Ask Question
                 </router-link>
-            </li>
-        </ul>
-
-        <answers 
-        :question="question"></answers>
+            </div>
+    
+            <div class="asked-modified-date-time">
+                <div class="date-time">
+                    <p>Asked {{ formatDate(question.createdAt) }}</p>
+                    <p>Modified {{ formatDate(question.updatedAt) }}</p>
+                </div>
+                <div v-if="canEditOrDeleteQuestion(question)" class="ud-btn-container">
+                    <div class="ud-btn">
+                        <router-link class="edit-btn" :to="{name: 'editQuestion', params: { id: question._id }}">
+                            <span class="icon">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </span>
+                            <span class="text">
+                                Edit
+                            </span>
+                        </router-link>
+                    </div>
+                    <div class="ud-btn" @click.prevent="onDelete(question._id)">
+                        <a class="delete-btn" :href="`/questions/${question._id}`">
+                            <span class="icon">
+                                <i class="fa-solid fa-trash"></i>
+                            </span>
+                            <span class="text">
+                                Delete
+                            </span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="question-description">
+                {{ question.description }}
+            </div>
+    
+            <div class="tags-user-time">
+                <ul class="tags-list" v-if="question.tags && question.tags.length > 0">
+                    <li class="tags" v-for="(tag, i) in question.tags" :key="i">
+                        <router-link :to="{ name: 'tagDetail', params: { id: tag._id }}" class="tag">
+                            {{ tag.name }}
+                        </router-link>
+                    </li>
+                </ul>
+        
+                <div class="question-title">
+                    <span class="user-name" v-if="question.userId && question.userId.name">
+                        {{ question.userId.name }}
+                    </span>
+                    <span 
+                    v-if="question.createdAt === question.updatedAt" 
+                    class="createdTime">
+                        asked {{ formatRelativeTime(question.createdAt) }}
+                    </span>
+                    <span v-else class="updatedTime">
+                        modified {{ formatRelativeTime(question.updatedAt) }}
+                    </span>
+                </div>
+            </div>
+    
+            <answers 
+            :question="question"></answers>
+        </div>
     </div>
 </template>
 
 <script>
     import Answers from '@/components/Answers.vue';
     import exportApis from '@/helpers/api/exportApis';
+    import { mapGetters } from 'vuex';
     import dayjs from 'dayjs';
     import relativeTime from 'dayjs/plugin/relativeTime';
 
@@ -68,15 +92,12 @@
         },
         data () {
             return {
-                question: {
-                    _id: '',
-                    title: '',
-                    description: '',
-                    createdAt: '',
-                    updatedAt: '',
-                    tags: []
-                }
+                question: {},
+                isLoading: true
             }
+        },
+        computed: {
+            ...mapGetters('auth', ['userRole'])
         }, 
         methods: {
             formatDate(timestamp) {
@@ -86,20 +107,52 @@
                 return dayjs(timestamp).fromNow();
             },
             canEditOrDeleteQuestion(question) {
+                if (this.userRole === 'admin') {
+                    return true;
+                }
+                
                 const currentUserId = this.$store.state.auth.userId;
+                
+                if (question.userId && typeof question.userId === 'object') {
+                    return currentUserId && question.userId._id === currentUserId;
+                }
+                
                 return currentUserId && question.userId === currentUserId;
             },
             async onDelete(id) {
                 const sure = window.confirm('Do you really want to delete this question?');
                 if (!sure) return;
-                await exportApis.questions.deleteQuestion(id);
-                this.$showMessage.success('Question deleted successfully!');
-                this.$router.push('/admin/questions');
+                
+                this.isLoading = true;
+                try {
+                    await exportApis.questions.deleteQuestion(id);
+                    
+                    setTimeout(() => {
+                        this.$showMessage.success('Question deleted successfully!');
+                        this.$router.push('/admin/questions');
+                    }, 500);
+                } catch (error) {
+                    console.error('Error deleting question:', error);
+                    this.isLoading = false;
+                    this.$showMessage.error('Failed to delete question. Please try again.');
+                }
+            },
+            async loadQuestionDetails() {
+                this.isLoading = true;
+                try {
+                    setTimeout(async () => {
+                        this.question = await exportApis.questions.getQuestion(this.$route.params.id);
+                        this.isLoading = false;
+                    }, 500);
+                } catch (error) {
+                    console.error('Error loading question details:', error);
+                    this.isLoading = false;
+                    this.$showMessage.error('Failed to load question details. Please try again.');
+                }
             }
         },
-        async mounted() {
-            this.question = await exportApis.questions.getQuestion(this.$route.params.id);
-
+        mounted() {
+            this.loadQuestionDetails();
         }
     }
 </script>
@@ -142,7 +195,7 @@
 
     .admin-question-detail .asked-modified-date-time {
         display: flex;
-        align-items: center;
+        align-items: flex-end;
         gap: 1.5em;
         font-size: 14px;
         color: #666;
@@ -208,7 +261,7 @@
         display: flex;
         gap: 1em;
         width: max-content;
-        margin-bottom: 0.25em;
+        margin-bottom: 0.75em;
         padding: 0;
     }
 
@@ -244,6 +297,67 @@
         margin-right: 0.25em;
     }
 
+    .tags-user-time {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .question-title {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 6px;
+        text-align: right;
+        min-width: 200px;
+    }
+
+    .user-name {
+        font-weight: 600;
+        color: #2980b9;
+        font-size: 15px;
+        position: relative;
+    }
+
+    .createdTime, .updatedTime {
+        font-size: 13px;
+        color: #95a5a6;
+        font-style: italic;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .updatedTime {
+        color: #3498db;
+    }
+
+    .loading-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 0;
+        margin: 20px 0;
+    }
+
+    .loading-spinner {
+        width: 48px;
+        height: 48px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #1B75D0;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 15px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
     @media screen and (max-width: 1024px) {        
         .ud-btn-container .edit-btn,
         .ud-btn-container .delete-btn {
@@ -275,6 +389,10 @@
 
         .admin-question-detail .asked-modified-date-time {
             gap: 1em;
+        }
+        
+        .tags-user-time {
+            gap: 15px;
         }
     }
 </style>

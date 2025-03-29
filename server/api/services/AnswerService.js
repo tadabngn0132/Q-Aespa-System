@@ -4,6 +4,7 @@ const Answer = mongoose.model('Answer');
 const answerService = {
     getAnswersByQuestionId: async (questionId) => {
         return await Answer.find({ questionId: questionId })
+            .populate('userId', 'name email')
             .sort({ createdAt: -1 });
     },
 

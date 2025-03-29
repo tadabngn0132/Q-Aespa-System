@@ -1,5 +1,9 @@
 const mongoose = require("mongoose");
 const User = mongoose.model('User');
+require('../models/QuestionModel');
+const Question = mongoose.model('Question');
+require('../models/AnswerModel');
+const Answer = mongoose.model('Answer');
 const authService = require('./AuthService');
 
 const userService = {
@@ -14,6 +18,8 @@ const userService = {
         }
 
         await User.deleteOne({ _id: userId });
+        await Question.deleteMany({userId: userId})
+        await Answer.deleteMany({userId: userId})
         return userId;
     },
     getUser: async (userId) => {
