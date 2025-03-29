@@ -85,19 +85,25 @@
             </label>
 
             <div class="role-choice">
-                <input 
-                type="radio" 
-                name="role" 
-                id="admin-role" 
-                value="admin">
-                <span class="role-name">Admin</span>
+                <div class="choice">
+                    <input 
+                    type="radio" 
+                    name="role" 
+                    id="admin-role" 
+                    value="admin"
+                    v-model="formData.role">
+                    <span class="role-name">Admin</span>
+                </div>
     
-                <input 
-                type="radio" 
-                name="role" 
-                id="student-role" 
-                value="student">
-                <span class="role-name">Student</span>
+                <div class="choice">
+                    <input 
+                    type="radio" 
+                    name="role" 
+                    id="student-role" 
+                    value="student"
+                    v-model="formData.role">
+                    <span class="role-name">Student</span>
+                </div>
             </div>
 
             <button type="submit">
@@ -124,7 +130,8 @@ export default {
             default: () => {
                 return {
                     name: '',
-                    email: ''
+                    email: '',
+                    role: 'student'
                 }
             }
         }
@@ -134,7 +141,8 @@ export default {
             formData: {
                 name: '',
                 email: '',
-                password: ''
+                password: '',
+                role: 'student'
             },
             errors: {
                 name: [],
@@ -162,7 +170,8 @@ export default {
                 this.$emit('createUser', {
                     name: this.formData.name,
                     email: this.formData.email,
-                    password: this.formData.password
+                    password: this.formData.password,
+                    role: this.formData.role
                 });
             }
             
@@ -176,7 +185,8 @@ export default {
                 
                 this.$emit('editUser', {
                     name: this.formData.name,
-                    email: this.formData.email
+                    email: this.formData.email,
+                    role: this.formData.role
                 });
             }
         }
@@ -186,6 +196,7 @@ export default {
             handler(newVal) {
                 this.formData.name = newVal.name;
                 this.formData.email = newVal.email;
+                this.formData.role = newVal.role || 'student';
             },
             immediate: true
         }
@@ -267,6 +278,12 @@ export default {
 
 .role-choice {
     display: flex;
+    gap: 2em;
+}
+
+.choice {
+    display: flex;
+    gap: 0.25em;
 }
 
 .user-form button {

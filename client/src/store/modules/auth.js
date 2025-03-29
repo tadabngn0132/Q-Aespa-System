@@ -163,25 +163,21 @@ const actions = {
             commit('SET_LOADING', true);
             
             const userProfile = await exportApis.users.getUser(state.userId);
-
+    
             if (userProfile) {
+                const currentRole = state.role;
+                
                 commit('SET_USER', userProfile);
-
-                if (userProfile.role) {
+    
+                if (userProfile.role && userProfile.role !== currentRole) {
                     commit('SET_ROLE', userProfile.role);
-
-                    if (userProfile === 'admin') {
-                        router.push('/admin');
-                    } else {
-                        router.push('/student');
-                    }
                 }
-
+    
                 const tokenExpiration = localStorage.getItem('tokenExpiration');
                 if (tokenExpiration) {
                     const now = new Date().getTime();
                     const timeLeft = parseInt(tokenExpiration) - now;
-
+    
                     if (timeLeft <= 0) {
                         console.log('Token has expired');
                         dispatch('logout');
@@ -197,7 +193,7 @@ const actions = {
             } else {
                 throw new Error('User profile not found');
             }
-
+    
         } catch (error) {
             commit('SET_ERROR', error.message || 'Unable to get user information');
             return null;
@@ -229,7 +225,7 @@ const actions = {
                 console.log('No token found in localStorage');
                 return;
             }
-
+    
             const tokenExpiration = localStorage.getItem('tokenExpiration');
             if (tokenExpiration) {
                 const now = new Date().getTime();
@@ -239,12 +235,10 @@ const actions = {
                     return;
                 }
             }
-
+    
             console.log('Found token, setting up authentication');
             commit('SET_TOKEN', token);
-
             apiClient.setupAuthToken(token);
-
             
             const savedRole = localStorage.getItem('userRole');
             if (savedRole) {
@@ -260,13 +254,13 @@ const actions = {
             if (userData) {
                 try {
                     const parsedUserData = JSON.parse(userData);
-
+    
                     const userWithId = {
                         ...parsedUserData,
                         userId: saveUserId,
                         role: savedRole
                     }
-
+    
                     commit('SET_USER', userWithId);
                 } catch (error) {
                     console.error('Error parsing userData:', error);
@@ -274,9 +268,11 @@ const actions = {
             }
             
             if (saveUserId) {
-                dispatch('fetchUserProfile').catch(error => {
+                try {
+                    await dispatch('fetchUserProfile');
+                } catch (error) {
                     console.warn('Failed to fetch updated user profile:', error);
-                });
+                }
             }
         } catch (error) {
             console.error('Error in checkAuthState:', error);

@@ -50,7 +50,8 @@ const userService = {
 
         const updateData = {
             name: userData.name,
-            email: userData.email
+            email: userData.email,
+            role: userData.role
         }
 
         const user = await User.findByIdAndUpdate(

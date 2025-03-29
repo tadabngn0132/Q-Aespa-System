@@ -75,6 +75,7 @@ export default {
     userApiClient,
     registerApiClient,
     loginApiClient,
+    changepasswordApiClient,
 
     setupAuthToken,
     getToken: () => localStorage.getItem('token'),

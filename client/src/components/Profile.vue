@@ -82,7 +82,11 @@
                             <user-form
                             @editUser="editUser"
                             :isEditing="true"
-                            :user="{name: currentUser.name, email: currentUser.email}"></user-form>
+                            :user="{
+                                name: currentUser.name, 
+                                email: currentUser.email, 
+                                role: currentUser.role
+                                }"></user-form>
                         </div>
                         <div class="content">
                             <change-password></change-password>
@@ -146,9 +150,23 @@ export default {
         },
         setActiveSettingItem(index) {
             this.activeSettingTab = index;
+
+            const contentSections = document.querySelectorAll('.setting-content .content');
+            contentSections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            const settingItems = document.querySelectorAll('.setting-item');
+            settingItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            settingItems[index].classList.add('active');
+            
+            contentSections[index].classList.add('active');
         },
         initializeSettings() {
-            this.activeSettingTab = 0;
+            this.setActiveSettingItem(0);
         },
         async editUser(user) {
             console.log('User data:', user);
@@ -183,7 +201,9 @@ export default {
     },
     mounted() {
         if (this.activeTab === 'setting') {
-            this.initializeSettings();
+            this.$nextTick(() => {
+                this.initializeSettings();
+            });
         };
     },
     watch: {
@@ -193,7 +213,9 @@ export default {
             } else if (newTab === 'answers') {
                 this.fetchUserAnswers();
             } else if (newTab === 'setting') {
-                this.initializeSettings();
+                this.$nextTick(() => {
+                    this.initializeSettings();
+                });
             }
         },
         currentUser(newUser) {

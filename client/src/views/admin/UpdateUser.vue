@@ -26,7 +26,7 @@ export default {
             
             try {
                 const updatedUser = await exportApis.users.updateUser(this.user._id, user);
-                this.$showMessage.success('Uset updated successfully!');
+                this.$showMessage.success('User updated successfully!');
                 this.$router.push(`/admin/users/${updatedUser._id}`);
             } catch (error) {
                 console.error('Error updating user:', error);
