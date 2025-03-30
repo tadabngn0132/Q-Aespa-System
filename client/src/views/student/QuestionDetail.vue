@@ -176,7 +176,7 @@
         background-color: #0077cc;
         color: white;
         font-weight: 500;
-        width: 35%;
+        width: 45%;
         padding: 0.5em 1em;
         border-radius: 8px;
         transition: background-color 0.2s ease;

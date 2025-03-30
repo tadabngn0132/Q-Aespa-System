@@ -224,7 +224,6 @@ li.users:hover .user-name {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
-/* Adding responsiveness */
 @media (max-width: 600px) {
     .users {
         flex-direction: column;

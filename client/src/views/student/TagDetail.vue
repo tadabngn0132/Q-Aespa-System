@@ -1,41 +1,48 @@
 <template>
     <div class="student-tag-detail">
-        <h1 class="tag-name">#{{ tag.name }}</h1>
-        <p class="tag-description">{{ tag.description }}</p>
+        <div v-if="isLoading" class="loading-container">
+            <span class="loader"></span>
+            <p>Loading tag details...</p>
+        </div>
 
-        <span v-if="questionCount > 1" class="question-count">
-            {{ questionCount }} questions
-        </span>
+        <div v-else>
+            <h1 class="tag-name">#{{ tag.name }}</h1>
+            <p class="tag-description">{{ tag.description }}</p>
 
-        <span v-if="questionCount <= 1" class="question-count">
-            {{ questionCount }} question
-        </span>
+            <span v-if="questionCount > 1" class="question-count">
+                {{ questionCount }} questions
+            </span>
 
-        <ul class="questions-list">
-            <li 
-            v-for="(question, i) in questions"
-            :key="i" 
-            class="questions">
-                <router-link :to="{name: 'StudentQuestionDetail', params: { id: question._id}}" class="question-title">
-                    {{ question.title }}
-                </router-link>
+            <span v-if="questionCount <= 1" class="question-count">
+                {{ questionCount }} question
+            </span>
 
-                <p class="question-description">
-                    {{ getTruncatedDecripition(question.description) }}
-                </p>
+            <ul class="questions-list">
+                <li 
+                v-for="(question, i) in questions"
+                :key="i" 
+                class="questions">
+                    <router-link :to="{name: 'StudentQuestionDetail', params: { id: question._id}}" class="question-title">
+                        {{ question.title }}
+                    </router-link>
 
-                <ul class="question-tags-list">
-                    <li
-                    v-for="(questionTag, j) in question.tags"
-                    :key="j" 
-                    class="question-tags">
-                        <router-link :to="{name: 'studentTagDetail', params: { id: questionTag._id}}" class="question-tag">
-                            {{ questionTag.name }}
-                        </router-link>
-                    </li>
-                </ul>
-            </li>
-        </ul>
+                    <p class="question-description">
+                        {{ getTruncatedDecripition(question.description) }}
+                    </p>
+
+                    <ul class="question-tags-list">
+                        <li
+                        v-for="(questionTag, j) in question.tags"
+                        :key="j" 
+                        class="question-tags">
+                            <router-link :to="{name: 'studentTagDetail', params: { id: questionTag._id}}" class="question-tag">
+                                {{ questionTag.name }}
+                            </router-link>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </div>
 </template>
 
@@ -48,7 +55,8 @@ import exportApis from '@/helpers/api/exportApis';
             return {
                 tag: {},
                 questions: [],
-                questionCount: 0
+                questionCount: 0,
+                isLoading: true
             }
         },
         async mounted() {
@@ -56,9 +64,19 @@ import exportApis from '@/helpers/api/exportApis';
         },
         methods: {
             async fetchData() {
-                this.tag = await exportApis.tags.getTag(this.$route.params.id);
-                this.questions = await exportApis.questions.getQuestionsByTagId(this.$route.params.id);
-                this.questionCount = this.questions.length;
+                this.isLoading = true;
+                
+                setTimeout(async () => {
+                    try {
+                        this.tag = await exportApis.tags.getTag(this.$route.params.id);
+                        this.questions = await exportApis.questions.getQuestionsByTagId(this.$route.params.id);
+                        this.questionCount = this.questions.length;
+                    } catch (error) {
+                        console.error('Error fetching tag details:', error);
+                    } finally {
+                        this.isLoading = false;
+                    }
+                }, 1000);
             },
             getTruncatedDecripition: function(description) {
                 if (description && description.length > 175) {
@@ -180,7 +198,50 @@ import exportApis from '@/helpers/api/exportApis';
     color: white;
 }
 
-/* Responsive adjustments */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+    margin: 20px 0;
+}
+
+.loader { 
+    width: 48px; 
+    height: 48px; 
+    border-radius: 50%; 
+    position: relative; 
+    animation: rotate 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+.loader::before, .loader::after { 
+    content: ""; 
+    box-sizing: border-box; 
+    position: absolute; 
+    inset: 0px; 
+    border-radius: 50%; 
+    border: 5px solid #FFF; 
+    animation: prixClipFix 2s linear infinite; 
+} 
+
+.loader::after { 
+    transform: rotate3d(90, 90, 0, 180deg); 
+    border-color: #3498db; 
+} 
+
+@keyframes rotate { 
+    0% {transform: rotate(0deg)} 
+    100% {transform: rotate(360deg)} 
+} 
+
+@keyframes prixClipFix { 
+    0% {clip-path:polygon(50% 50%,0 0,0 0,0 0,0 0,0 0)} 
+    50% {clip-path:polygon(50% 50%,0 0,100% 0,100% 0,100% 0,100% 0)} 
+    75%, 100% {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,100% 100%,100% 100%)} 
+}
+
 @media (max-width: 768px) {
     .tag-name {
         font-size: 1.8rem;

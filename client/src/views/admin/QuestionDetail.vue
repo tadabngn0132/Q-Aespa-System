@@ -183,7 +183,7 @@
     .admin-question-detail .question-title-create-btn .create-btn {
         background-color: #1B75D0;
         color: #fff;
-        width: 35%;
+        width: 45%;
         padding: 0.5em 1em;
         border-radius: 0.5em;
         transition: background-color 0.2s ease;

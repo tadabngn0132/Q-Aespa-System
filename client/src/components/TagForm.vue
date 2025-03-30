@@ -187,7 +187,7 @@
     border-left: 2px solid #e74c3c;
 }
 
-.create-btn {
+.create-or-update-btn {
     background-color: #3498db;
     color: white;
     border: none;
@@ -201,13 +201,13 @@
     margin-top: 10px;
 }
 
-.create-btn:hover {
+.create-or-update-btn:hover {
     background-color: #2980b9;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.create-btn:active {
+.create-or-update-btn:active {
     transform: translateY(0);
 }
 
@@ -232,7 +232,7 @@
         padding: 10px 12px;
     }
     
-    .create-btn {
+    .create-or-update-btn {
         width: 100%;
         padding: 12px 0;
     }
