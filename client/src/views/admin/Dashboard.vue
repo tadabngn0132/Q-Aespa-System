@@ -302,8 +302,8 @@ export default {
     }
 
     .dashboard-sections {
-        display: grid;
-        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
         gap: 2rem;
         margin-bottom: 2.5rem;
     }

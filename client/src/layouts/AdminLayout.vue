@@ -78,6 +78,11 @@
                             <span>Profile</span>
                         </router-link>
                     </li>
+                    <li class="nav-items">
+                        <a class="router-link" id="logout-nav" @click="logout" v-if="isAuthenticated">
+                            <span>Logout</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </header>
@@ -213,6 +218,7 @@
 
     .auth--nav-icon {
         display: flex;
+        gap: 0.5em;
     }
 
     .login-register-logout {
@@ -232,6 +238,7 @@
     }
 
     .authen-logout button {
+        display: block;
         background-color: var(--secondary-color);
         color: var(--background-color);
         border: none;
@@ -245,6 +252,10 @@
     .authen-logout button:hover {
         opacity: 0.8;
         transform: scale(1.05);
+    }
+
+    #logout-nav {
+        display: none;
     }
 
     .login-register {
@@ -304,7 +315,7 @@
     }
 
     .admin-layout .content-wrapper main {
-        min-height: 80vh;
+        min-height: 90vh;
         margin: 1em 0 2em;
     }
 
@@ -428,17 +439,19 @@
 
     @media screen and (max-width: 480px) {
         .login-register-logout {
-            position: absolute;
-            top: calc(2em + 40px);
-            right: 0;
-            background-color: var(--background-color);
-            padding: 1em;
-            border-radius: 0 0 0 1em;
-            z-index: 999;
+            margin-right: 0.5em;
         }
-        
-        .admin-layout header {
-            flex-wrap: wrap;
+
+        .auth--nav-icon {
+            gap: 0;
+        }
+
+        .authen-logout button {
+            display: none;
+        }
+
+        #logout-nav {
+            display: block;
         }
     }
 </style>
