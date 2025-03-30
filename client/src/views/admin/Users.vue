@@ -105,6 +105,17 @@ export default {
     font-weight: 600;
 }
 
+.user-name {
+    padding: 0.25em 0.75em;
+    border-left: 0.2em solid #6598db;
+    transition: all 0.4s ease-in-out;
+}
+
+li.users:hover .user-name {
+    color: #6598db;
+    font-weight: bold;
+}
+
 .create-btn {
     display: flex;
     align-items: center;
@@ -117,7 +128,7 @@ export default {
     background-color: #3498db;
     color: white;
     padding: 10px 15px;
-    border-radius: 5px;
+    border-radius: 1em;
     font-weight: 500;
     transition: background-color 0.3s;
 }
@@ -171,7 +182,7 @@ export default {
 .edit-btn, .delete-btn {
     display: inline-block;
     padding: 8px 15px;
-    border-radius: 4px;
+    border-radius: 1em;
     text-decoration: none;
     transition: all 0.3s ease;
 }

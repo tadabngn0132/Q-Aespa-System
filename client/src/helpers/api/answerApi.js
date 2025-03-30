@@ -37,6 +37,11 @@ export const answerApi = {
         const res = await apiClient.answerApiClient.get(path);
         return res.data;
     }),
+    getAllAnswers: handleError(async () => {
+        const path = `/answers`
+        const res = await apiClient.answerApiClient.get(path);
+        return res.data;
+    }),
     getAnswersByUserId: handleError(async (userId) => {
         const path = `users/${userId}/answers`;
         const res = await apiClient.answerApiClient.get(path);

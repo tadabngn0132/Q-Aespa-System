@@ -2,6 +2,9 @@ const AnswerBuilder = require('../controllers/AnswerController');
 
 module.exports = app => {
     app
+        .route('/answers')
+        .get(AnswerBuilder.list_all_answers)
+    app
         .route('/questions/:questionId/answers')
         .get(AnswerBuilder.listAllAnswersOfQuestion)
         .post(AnswerBuilder.createAnAnswer);

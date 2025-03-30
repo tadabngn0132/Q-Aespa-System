@@ -2,6 +2,12 @@ const mongoose = require('mongoose');
 const Answer = mongoose.model('Answer');
 
 const answerService = {
+    getAnswers: async () => {
+        return await Answer.find({})
+            .populate('userId', 'name email')
+            .sort({ createdAt: -1 });
+    },
+    
     getAnswersByQuestionId: async (questionId) => {
         return await Answer.find({ questionId: questionId })
             .populate('userId', 'name email')

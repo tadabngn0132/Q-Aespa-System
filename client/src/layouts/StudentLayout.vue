@@ -303,7 +303,7 @@
     }
 
     .student-layout .content-wrapper main {
-        min-height: 90vh;
+        min-height: 80vh;
         margin: 1em 0 2em;
     }
 

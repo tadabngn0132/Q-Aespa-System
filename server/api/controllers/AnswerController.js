@@ -1,6 +1,15 @@
 const answerService = require('../services/AnswerService');
 
 const answerController = {
+    list_all_answers: async (req, res) => {
+        try {
+            const answers = await answerService.getAnswers();
+            res.json(answers);
+        } catch (err) {
+            res.status(500).send({ message: err.message });
+        }
+    },
+
     listAllAnswersOfQuestion: async (req, res) => {
         try {
             const { questionId } = req.params;
