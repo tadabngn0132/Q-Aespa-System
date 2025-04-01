@@ -1,8 +1,6 @@
 import apiClient from './apiClient';
 import Vue from 'vue';
 
-const vm = new Vue();
-
 const handleError = fn => (...params) =>
     fn(...params).catch(error => {
         let errorMessage = 'An unknown error occurred';
@@ -47,6 +45,10 @@ export const questionApi = {
     }),
     deleteQuestion: handleError(async id => {
         const res = await apiClient.questionApiClient.delete(`${id}`);
+        return res.data;
+    }),
+    searchQuestion: handleError(async keyword => {
+        const res = await apiClient.questionApiClient.get(`/search?keyword=${keyword}`);
         return res.data;
     })
 };

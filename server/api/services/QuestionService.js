@@ -93,7 +93,6 @@ const questionService = {
     },
 
     deleteQuestion: async (questionId) => {
-        // Get question info before delete to delete image
         const question = await Question.findById(questionId);
         if (!question) {
             throw new Error('Question not found');
@@ -102,7 +101,39 @@ const questionService = {
         await Question.deleteOne({ _id: questionId });
         await Answer.deleteMany({ questionId: questionId });
         return questionId;
-    }
+    },
+
+    searchQuestionsByKeyword: async (keyword) => {
+        try {
+            let foundQuestions = await Question.find({
+                $or:[
+                    {"name": {"$regex": keyword, "$options": "i"}},
+                    {"description": {"$regex": keyword, "$options": "i"}}
+                ]
+            });
+    
+            foundQuestions = await Question.populate(foundQuestions, [
+                {
+                    path: 'tags',
+                    select: '_id name'
+                }, {
+                    path: 'userId',
+                    select: 'name email'
+                }
+            ]);
+            
+            return foundQuestions;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    getAllQuestionsAsc: async () => {
+        return await Question.find({})
+            .populate('tags', 'name _id')
+            .populate('userId', 'name email')
+            .sort({ createdAt: 1 });
+    },
 };
 
 module.exports = questionService;

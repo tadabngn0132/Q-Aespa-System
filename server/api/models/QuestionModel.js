@@ -36,12 +36,12 @@ const QuestionSchema = new Schema(
     }
 );
 // Text index for search by keyword
-QuestionSchema.index({ title: 'text', description: 'text'});
+QuestionSchema.index({ title: 1 });
+QuestionSchema.index({ description: 1 });
 
-// Index for arrange by tag (ascending) and created time (desc)
-QuestionSchema.index({ tags: 1, createdAt: -1 })
+// Index for arrange by and created time (desc) and (asc) 
+QuestionSchema.index({ createdAt: -1 });
 
-// Index for title
-QuestionSchema.index({ title: 1 })
+QuestionSchema.index({ createdAt: 1 });
 
 module.exports = mongoose.model('Question', QuestionSchema);

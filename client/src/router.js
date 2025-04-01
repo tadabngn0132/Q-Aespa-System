@@ -38,6 +38,11 @@ const routes = [
                 path: '/admin/questions',
                 name: 'AdminQuestions',
                 component: () => import('@/views/admin/Questions.vue')
+            },
+            {
+                path: '/admin/search',
+                name: 'AdminSearch',
+                component: () => import('@/views/admin/Questions.vue')
             }, 
             {
                 path: '/admin/askquestion',
@@ -114,6 +119,11 @@ const routes = [
             {
                 path: '/student/questions',
                 name: 'StudentQuestions',
+                component: () => import('@/views/student/Questions.vue')
+            },
+            {
+                path: '/student/search',
+                name: 'StudentSearch',
                 component: () => import('@/views/student/Questions.vue')
             }, 
             {

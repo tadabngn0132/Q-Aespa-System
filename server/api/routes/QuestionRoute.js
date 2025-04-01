@@ -6,6 +6,15 @@ module.exports = app => {
         .get(questionBuilder.list_all_questions)
         .post(questionBuilder.create_a_question);
     app
+        .route('/questions/sort')
+        .get((req, res) => {
+            if (req.query.sort === 'asc') {
+                questionBuilder.list_all_questions_asc(req, res);
+            } else {
+                questionBuilder.list_all_questions(req, res);
+            }
+        });
+    app
         .route('/questions/bytag/:tagId')
         .get(questionBuilder.list_questions_by_tag_id);
     app
@@ -16,4 +25,7 @@ module.exports = app => {
         .get(questionBuilder.read_a_question)
         .put(questionBuilder.update_a_question)
         .delete(questionBuilder.delete_a_question);
+    app
+        .route('/questions/search')
+        .get(questionBuilder.search_questions);
 };

@@ -1,12 +1,18 @@
 <template>
     <div class="admin-layout" @click="closeNav">
         <header>
-            <router-link to="/admin">
-                <div class="page-logo--role">
-                    <img :src="logo" :alt="altLogo">
-                    <span>ADMIN</span>
-                </div>
-            </router-link>
+            <div class="avatar-search-bar">
+                <router-link to="/admin">
+                    <div class="page-logo--role">
+                        <img :src="logo" :alt="altLogo">
+                        <span>ADMIN</span>
+                    </div>
+                </router-link>
+
+                <search-bar 
+                @getKeyword="getKeyword"
+                ></search-bar>
+            </div>
 
             <nav class="original-nav">
                 <ul>
@@ -100,15 +106,21 @@
 </template>
 
 <script>
+    import SearchBar from '@/components/SearchBar.vue';
     import { mapGetters } from 'vuex';
     
     export default {
         name: 'AdminLayout',
+        components: {
+            'search-bar': SearchBar
+        },
         data() {
             return {
                 logo: 'https://betterthingsbyaespa.com/images/logo-2.webp',
                 altLogo: 'Logo',
-                isNavVisible: false
+                isNavVisible: false,
+                keyword: '',
+                isSearching: false
             }
         },
         computed: {
@@ -142,6 +154,20 @@
             },
             logout() {
                 this.$store.dispatch('auth/logout');
+            },
+            getKeyword: function(keyword) {
+                if (keyword === '') {
+                    this.keyword = '';
+                    this.isSearching = false;
+                } else {
+                    this.keyword = keyword;
+                    this.isSearching = true;
+
+                    this.$router.push({
+                        name: 'AdminSearch',
+                        query: { keyword: this.keyword }
+                    });
+                }
             }
         },
         mounted() {

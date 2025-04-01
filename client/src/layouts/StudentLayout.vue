@@ -1,11 +1,17 @@
 <template>
     <div class="student-layout" @click="closeNav">
         <header>
-            <router-link to="/student">
-                <div class="page-logo--role">
-                    <img :src="logo" :alt="altLogo">
-                </div>
-            </router-link>
+            <div class="avatar-search-bar">
+                <router-link to="/student">
+                    <div class="page-logo--role">
+                        <img :src="logo" :alt="altLogo">
+                    </div>
+                </router-link>
+
+                <search-bar 
+                @getKeyword="getKeyword"
+                ></search-bar>
+            </div>
 
             <nav class="original-nav">
                 <ul>
@@ -15,8 +21,8 @@
                         </router-link>
                     </li>
                     <li>
-                        <router-link class="router-link" to="/student/questions" exact-active-class="router-link-active">
-                            Questions
+                        <router-link class="router-link" to="/student/questions" exact-active-class="nav-router-link-active">
+                            <span>Questions</span>
                         </router-link>
                     </li>
                     <li>
@@ -103,11 +109,16 @@
 
     export default {
         name: 'StudentLayout',
+        components: {
+            'search-bar': SearchBar
+        },
         data() {
             return {
                 logo: 'https://betterthingsbyaespa.com/images/logo-2.webp',
                 altLogo: 'Logo',
-                isNavVisible: false
+                isNavVisible: false,
+                keyword: '',
+                isSearching: false
             }
         },
         computed: {
@@ -141,6 +152,20 @@
             },
             logout() {
                 this.$store.dispatch('auth/logout');
+            },
+            getKeyword: function(keyword) {
+                if (keyword === '') {
+                    this.keyword = '';
+                    this.isSearching = false;
+                } else {
+                    this.keyword = keyword;
+                    this.isSearching = true;
+
+                    this.$router.push({
+                        name: 'StudentSearch',
+                        query: { keyword: this.keyword }
+                    });
+                }
             }
         },
         mounted() {

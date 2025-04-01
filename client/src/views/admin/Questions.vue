@@ -108,7 +108,8 @@
             return {
                 questions: [],
                 questionCount: 0,
-                isLoading: true
+                isLoading: true,
+                keyword: ''
             };
         },
         methods: {
@@ -146,9 +147,15 @@
                 this.isLoading = true;
                 try {
                     setTimeout(async () => {
-                        this.questions = await exportApis.questions.getQuestions();
-                        this.questionCount = this.questions.length;
-                        this.isLoading = false;
+                        if (this.keyword === '') {
+                            this.questions = await exportApis.questions.getQuestions();
+                            this.questionCount = this.questions.length;
+                            this.isLoading = false;
+                        } else {
+                            this.questions = await exportApis.questions.searchQuestion(this.keyword);
+                            this.questionCount = this.questions.length;
+                            this.isLoading = false;
+                        }
                     }, 500);
                 } catch (error) {
                     console.error('Error loading questions:', error);
@@ -159,6 +166,7 @@
         },
         mounted() {
             this.loadQuestions();
+            this.keyword = this.$route.query.keyword;
         }
     }
 </script>
