@@ -42,8 +42,12 @@
                 </div>
             </div>
     
-            <div class="question-description">
-                {{ question.description }}
+            <div class="vote-btn-description">
+                <vote-button></vote-button>
+
+                <div class="question-description">
+                    {{ question.description }}
+                </div>
             </div>
     
             <div class="tags-user-time">
@@ -82,13 +86,15 @@
     import { mapGetters } from 'vuex';
     import dayjs from 'dayjs';
     import relativeTime from 'dayjs/plugin/relativeTime';
+    import VoteButton from '@/components/VoteButton.vue';
 
     dayjs.extend(relativeTime);
 
     export default {
         name: 'AdminQuestionDetail',
         components: {
-            'answers': Answers
+            'answers': Answers,
+            'vote-button': VoteButton
         },
         data () {
             return {
@@ -215,6 +221,12 @@
 
     .admin-question-detail .asked-modified-date-time p {
         margin: 0;
+    }
+
+    .admin-question-detail .vote-btn-description {
+        display: flex;
+        align-items: flex-start;
+        gap: 1em;
     }
 
     .admin-question-detail .question-description {

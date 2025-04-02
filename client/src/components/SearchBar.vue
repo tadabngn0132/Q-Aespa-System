@@ -47,7 +47,7 @@
     }
     
     .search-input {
-        padding: 0.75em 1em;
+        padding: 0.65em 1em;
         border-radius: 1em 0 0 1em;
         box-shadow: rgba(255, 255, 255, 0.15) 1.95px 1.95px 2.6px;
         border: none;
@@ -55,7 +55,7 @@
     }
 
     .search-btn {
-        padding: 0.75em 1em 0.75em 0.9em;
+        padding: 0.65em 1em 0.65em 0.9em;
         border-radius: 0 1em 1em 0;
         box-shadow: rgba(255, 255, 255, 0.15) 1.95px 1.95px 2.6px;
         border: none;

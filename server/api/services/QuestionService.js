@@ -5,6 +5,9 @@ const Tag = mongoose.model('Tag');
 require('../models/AnswerModel');
 const Answer = mongoose.model('Answer');
 const answerService = require('./AnswerService');
+require('../models/VoteModel');
+const Vote = mongoose.model('Vote');
+const voteService = require('./VoteService');
 
 const questionService = {
     getAllQuestions: async () => {
@@ -18,10 +21,14 @@ const questionService = {
         const question = await Question.findById(questionId)
             .populate('tags', 'name _id')
             .populate('userId', 'name email');
+        const score = await voteService.countVotes(questionId);
         if (!questionId) {
             throw new Error('Question not found');
         }
-        return question;
+        return {
+            ...question.toObject(),
+            score
+        };
     },
 
     getQuestionsByTagId: async (tagId) => {

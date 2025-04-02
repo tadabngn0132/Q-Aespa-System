@@ -42,8 +42,12 @@
                 </div>
             </div>
 
-            <div class="question-description">
-                {{ question.description }}
+            <div class="vote-btn-description">
+                <vote-button></vote-button>
+
+                <div class="question-description">
+                    {{ question.description }}
+                </div>
             </div>
 
             <div class="tags-user-time">
@@ -78,6 +82,7 @@
 
 <script>
     import Answers from '@/components/Answers.vue';
+    import VoteButton from '@/components/VoteButton.vue';
     import exportApis from '@/helpers/api/exportApis';
     import dayjs from 'dayjs';
     import relativeTime from 'dayjs/plugin/relativeTime';
@@ -87,7 +92,8 @@
     export default {
         name: 'StudentQuestionDetail',
         components: {
-            'answers': Answers
+            'answers': Answers,
+            'vote-button': VoteButton
         },
         data () {
             return {
@@ -207,6 +213,12 @@
 
     .student-question-detail .asked-modified-date-time p {
         margin: 0;
+    }
+
+    .student-question-detail .vote-btn-description {
+        display: flex;
+        align-items: flex-start;
+        gap: 1em;
     }
 
     .student-question-detail .question-description {

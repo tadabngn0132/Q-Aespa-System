@@ -45,13 +45,10 @@
     list-style-type: none;
     padding: 0;
     margin: 0;
-    gap: 0.5rem;
 }
 
 .sort-items {
     padding: 0.35rem 1rem;
-    background-color: #fff;
-    border: 1px solid #e0e0e0;
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;

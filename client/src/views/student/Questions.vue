@@ -2,9 +2,8 @@
     <div class="questions-container">
         <div class="question-title--create-btn">
             <h1 class="questions-title">Newest Questions</h1>
-            <router-link class="create-btn" to="askquestion">
-                Ask Question
-            </router-link>
+            <sort-bar
+            @sortChanged="sortChanged"></sort-bar>
         </div>
         
         <div v-if="isLoading" class="loading-container">
@@ -24,15 +23,21 @@
                 <tr>
                     <th v-if="questionCount > 1" class="questionCount">
                         {{ questionCount }} questions
+                        <router-link class="create-btn" to="askquestion">
+                            Ask Question
+                        </router-link>
                     </th>
                     <th v-else class="questionCount">
                         {{ questionCount }} question
+                        <router-link class="create-btn" to="askquestion">
+                            Ask Question
+                        </router-link>
                     </th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="(question, i) in questions" :key="i">
-                    <td class="question-title-show">
+                    <td class="question-title-show" colspan="2">
                         <div class="question-title">
                             <div class="user-infor">
                                 <span class="user-name" v-if="question.userId && question.userId.name">
@@ -79,6 +84,9 @@
 
     export default {
         name: 'StudentQuestions',
+        components: {
+            'sort-bar': SortBar
+        },
         data() {
             return {
                 questions: [],
@@ -114,6 +122,21 @@
                     this.isLoading = false;
                     this.$showMessage.error('Failed to load questions. Please try again.');
                 }
+            },
+            async sortChanged(sortType) {
+                this.isLoading = true;
+
+                setTimeout(async () => {
+                    if (sortType === 'Newest') {
+                        this.questions = await exportApis.questions.getQuestions();
+                    } else if (sortType === 'Oldest') {
+                        this.questions = await exportApis.questions.getQuestionsSort('asc');
+                    } else if (sortType === 'Unanswered') {
+                        this.questions = await exportApis.questions.getQuestionsSort('unanswered');
+                    }
+                    this.questionCount = this.questions.length;
+                    this.isLoading = false;
+                }, 500)
             }
         },
         watch: {
@@ -150,10 +173,10 @@
     font-weight: normal;
 }
 
-.questions-container .question-title--create-btn .create-btn {
+.questions-container .question-list-cud-btn .create-btn {
     background-color: #4BACB8;
     color: #fff;
-    padding: 0.75em 1.5em;
+    padding: 0.65em 1.5em;
     border-radius: 0.5em;
 }
 
@@ -165,6 +188,13 @@
     width: 100%;
     border-collapse: collapse;
     text-align: justify;
+}
+
+.questions-container .question-list-cud-btn .questionCount {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-top: 0.25em;
 }
 
 .questions-container .question-list-cud-btn
