@@ -13,8 +13,8 @@ module.exports = app => {
         .get((req, res) => {
             if (req.query.sort === 'asc') {
                 questionBuilder.list_all_questions_asc(req, res);
-            } else {
-                questionBuilder.list_all_questions(req, res);
+            } else if (req.query.sort === 'unanswered') {
+                questionBuilder.list_all_unanswered_questions(req, res);
             }
         });
     app

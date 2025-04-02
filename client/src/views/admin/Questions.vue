@@ -3,7 +3,8 @@
         <div class="title-page-sort-bar">
             <h1 class="questions-title">Newest Questions</h1>
 
-            <sort-bar></sort-bar>
+            <sort-bar
+            @sortChanged="sortChanged"></sort-bar>
         </div>
         
         <!-- <div v-if="isLoading" class="loading-container">
@@ -169,6 +170,21 @@
                     this.isLoading = false;
                     this.$showMessage.error('Error loading questions. Please try again.');
                 }
+            },
+            async sortChanged(sortType) {
+                this.isLoading = true;
+
+                setTimeout(async () => {
+                    if (sortType === 'Newest') {
+                        this.questions = await exportApis.questions.getQuestions();
+                    } else if (sortType === 'Oldest') {
+                        this.questions = await exportApis.questions.getQuestionsSort('asc');
+                    } else if (sortType === 'Unanswered') {
+                        this.questions = await exportApis.questions.getQuestionsSort('unanswered');
+                    }
+                    this.questionCount = this.questions.length;
+                    this.isLoading = false;
+                }, 500)
             }
         },
         watch: {
@@ -192,6 +208,13 @@
     .questions-container {
         margin: 0;
         padding: 0 1em;
+    }
+
+    .questions-container .title-page-sort-bar {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        margin-bottom: 1.25em;
     }
 
     .questions-container .questions-title {
@@ -239,7 +262,7 @@
     thead tr th .create-btn {
         background-color: #4BACB8;
         color: #fff;
-        padding: 0.75em 1.5em;
+        padding: 0.55em 1.5em;
         border-radius: 0.75em;
     }
 
@@ -514,7 +537,7 @@
         
         .questions-container .question-list-cud-btn
         tbody tr td.ud-btn-container .ud-btn {
-            padding: 1em 1.1em;
+            padding: 0.8em 0.9em;
             border-radius: 50%;
             transition: all 0.3s ease-in-out;
         }

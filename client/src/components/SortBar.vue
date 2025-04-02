@@ -15,17 +15,29 @@
 
 <script>
     export default {
-        name: SortBar
+        name: 'SortBar',
+        data() {
+            return {
+                activeSort: 'Newest'
+            }
+        },
+        methods: {
+            setSort(sortType) {
+                this.activeSort = sortType;
+                this.$emit('sortChanged', sortType);
+            }
+        }
     }
 </script>
 
 <style scoped>
 .sort-bar-container {
-    margin: 1rem 0;
-    padding: 0.5rem;
+    margin: 0;
+    padding: 0.35rem;
     background-color: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    width: fit-content;
 }
 
 .sort-items-list {
@@ -37,7 +49,7 @@
 }
 
 .sort-items {
-    padding: 0.5rem 1rem;
+    padding: 0.35rem 1rem;
     background-color: #fff;
     border: 1px solid #e0e0e0;
     border-radius: 4px;
@@ -56,16 +68,5 @@
     background-color: #4BACB8;
     color: white;
     border-color: #4BACB8;
-}
-
-@media (max-width: 768px) {
-    .sort-items-list {
-        flex-wrap: wrap;
-    }
-    
-    .sort-items {
-        flex-grow: 1;
-        text-align: center;
-    }
 }
 </style>

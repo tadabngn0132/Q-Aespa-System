@@ -4,6 +4,7 @@ require('../models/TagModel')
 const Tag = mongoose.model('Tag');
 require('../models/AnswerModel');
 const Answer = mongoose.model('Answer');
+const answerService = require('./AnswerService');
 
 const questionService = {
     getAllQuestions: async () => {
@@ -131,6 +132,19 @@ const questionService = {
             .populate('userId', 'name email')
             .sort({ createdAt: 1 });
     },
+
+    getAllQuestionsUnanswered: async () => {
+        const questions = await questionService.getAllQuestions();
+        
+        let unansweredQuestions = [];
+        for (const question of questions) {
+            const answerQuantity = await answerService.countAnswerByQuestionId(question._id);
+            if (answerQuantity === 0) {
+                unansweredQuestions.push(question);
+            }
+        }
+        return unansweredQuestions;
+    }
 };
 
 module.exports = questionService;

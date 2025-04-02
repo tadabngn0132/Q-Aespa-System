@@ -50,5 +50,9 @@ export const questionApi = {
     searchQuestion: handleError(async keyword => {
         const res = await apiClient.questionApiClient.get(`search?keyword=${encodeURIComponent(keyword)}`);
         return res.data;
+    }),
+    getQuestionsSort: handleError(async (sortType) => {
+        const res = await apiClient.questionApiClient.get(`sort?sort=${encodeURIComponent(sortType)}`);
+        return res.data;
     })
 };

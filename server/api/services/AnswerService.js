@@ -58,6 +58,10 @@ const answerService = {
 
         await Answer.deleteOne({ _id: answerId });
         return answerId;
+    },
+
+    countAnswerByQuestionId: async (questionId) => {
+        return Answer.countDocuments({ questionId: questionId });
     }
 };
 
