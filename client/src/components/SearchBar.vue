@@ -27,6 +27,14 @@
                     this.$emit('getKeyword', this.keyword.trim());
                 }
             }
+        },
+        watch: {
+            '$route.query.keyword': {
+                immediate: true,
+                handler(newKeyword) {
+                    this.keyword = newKeyword;
+                }
+            }
         }
     };
 </script>

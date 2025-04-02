@@ -1,7 +1,10 @@
 <template>
     <div class="questions-container">
-        <h1 v-if="questionCount > 1" class="questions-title">Newest Questions</h1>
-        <h1 v-else class="questions-title">Newest Question</h1>
+        <div class="title-page-sort-bar">
+            <h1 class="questions-title">Newest Questions</h1>
+
+            <sort-bar></sort-bar>
+        </div>
         
         <!-- <div v-if="isLoading" class="loading-container">
             <div class="loading-spinner"></div>
@@ -99,11 +102,15 @@
     import exportApis from '@/helpers/api/exportApis';
     import dayjs from 'dayjs';
     import relativeTime from 'dayjs/plugin/relativeTime';
+    import SortBar from '@/components/SortBar.vue';
 
     dayjs.extend(relativeTime);
 
     export default {
         name: 'AdminQuestions',
+        components: {
+            'sort-bar': SortBar
+        },
         data() {
             return {
                 questions: [],
@@ -147,7 +154,7 @@
                 this.isLoading = true;
                 try {
                     setTimeout(async () => {
-                        if (this.keyword === '') {
+                        if (this.keyword === '' || this.keyword === undefined) {
                             this.questions = await exportApis.questions.getQuestions();
                             this.questionCount = this.questions.length;
                             this.isLoading = false;
@@ -164,9 +171,19 @@
                 }
             }
         },
+        watch: {
+            '$route.query.keyword': {
+                immediate: true,
+                handler(newKeyword) {
+                    this.keyword = newKeyword || '';
+                    this.loadQuestions();
+                }
+            }
+        },
         mounted() {
-            this.loadQuestions();
             this.keyword = this.$route.query.keyword;
+            
+            // this.loadQuestions();
         }
     }
 </script>

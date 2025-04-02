@@ -1,8 +1,7 @@
 <template>
     <div class="questions-container">
         <div class="question-title--create-btn">
-            <h1 v-if="questionCount > 1" class="questions-title">Newest Questions</h1>
-            <h1 v-else class="questions-title">Newest Question</h1>
+            <h1 class="questions-title">Newest Questions</h1>
             <router-link class="create-btn" to="askquestion">
                 Ask Question
             </router-link>
@@ -74,6 +73,7 @@
     import exportApis from '@/helpers/api/exportApis';
     import dayjs from 'dayjs';
     import relativeTime from 'dayjs/plugin/relativeTime';
+    import SortBar from '@/components/SortBar.vue';
 
     dayjs.extend(relativeTime);
 
@@ -101,7 +101,7 @@
                 this.isLoading = true;
                 try {
                     setTimeout(async () => {
-                        if (this.keyword === '') {
+                        if (this.keyword === '' || this.keyword === undefined) {
                             this.questions = await exportApis.questions.getQuestions();
                         } else {
                             this.questions = await exportApis.questions.searchQuestion(this.keyword);
@@ -118,15 +118,17 @@
         },
         watch: {
             '$route.query.keyword': {
+                immediate: true,
                 handler(newKeyword) {
-                    this.keyword = {...newKeyword};
-                },
-                immediate: true
+                    this.keyword = newKeyword || '';
+                    this.loadQuestions();
+                }
             }
         },
         mounted() {
             this.keyword = this.$route.query.keyword;
-            this.loadQuestions();
+            
+            // this.loadQuestions();
         }
     }
 </script>
