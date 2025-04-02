@@ -80,7 +80,7 @@ exports.delete_a_question = async (req, res) => {
 
 exports.search_questions = async (req, res) => {
 try {
-    const keyword = req.query.keyword;
+    const { keyword } = req.query;
     const questions = await questionService.searchQuestionsByKeyword(keyword);
     res.json(questions);
     } catch (err) {

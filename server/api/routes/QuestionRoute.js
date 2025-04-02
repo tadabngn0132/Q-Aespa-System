@@ -6,6 +6,9 @@ module.exports = app => {
         .get(questionBuilder.list_all_questions)
         .post(questionBuilder.create_a_question);
     app
+        .route('/questions/search')
+        .get(questionBuilder.search_questions);
+    app
         .route('/questions/sort')
         .get((req, res) => {
             if (req.query.sort === 'asc') {
@@ -25,7 +28,4 @@ module.exports = app => {
         .get(questionBuilder.read_a_question)
         .put(questionBuilder.update_a_question)
         .delete(questionBuilder.delete_a_question);
-    app
-        .route('/questions/search')
-        .get(questionBuilder.search_questions);
 };

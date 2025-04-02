@@ -105,12 +105,9 @@ const questionService = {
 
     searchQuestionsByKeyword: async (keyword) => {
         try {
-            let foundQuestions = await Question.find({
-                $or:[
-                    {"name": {"$regex": keyword, "$options": "i"}},
-                    {"description": {"$regex": keyword, "$options": "i"}}
-                ]
-            });
+            let foundQuestions = await Question.find(
+                {"title": {"$regex": keyword, "$options": "i"}}
+            );
     
             foundQuestions = await Question.populate(foundQuestions, [
                 {

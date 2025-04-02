@@ -48,7 +48,7 @@ export const questionApi = {
         return res.data;
     }),
     searchQuestion: handleError(async keyword => {
-        const res = await apiClient.questionApiClient.get(`/search?keyword=${keyword}`);
+        const res = await apiClient.questionApiClient.get(`search?keyword=${encodeURIComponent(keyword)}`);
         return res.data;
     })
 };

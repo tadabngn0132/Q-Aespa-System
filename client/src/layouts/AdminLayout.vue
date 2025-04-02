@@ -216,6 +216,12 @@
         z-index: 1000;
     }
 
+    .admin-layout .avatar-search-bar {
+        display: flex;
+        align-items: center;
+        gap: 1em;
+    }
+
     .admin-layout header .page-logo--role {
         display: flex;
         align-items: flex-start;

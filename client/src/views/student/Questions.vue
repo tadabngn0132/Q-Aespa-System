@@ -103,13 +103,11 @@
                     setTimeout(async () => {
                         if (this.keyword === '') {
                             this.questions = await exportApis.questions.getQuestions();
-                            this.questionCount = this.questions.length;
-                            this.isLoading = false;
                         } else {
                             this.questions = await exportApis.questions.searchQuestion(this.keyword);
-                            this.questionCount = this.questions.length;
-                            this.isLoading = false;
                         }
+                        this.questionCount = this.questions.length;
+                        this.isLoading = false;
                     }, 500);
                 } catch (error) {
                     console.error('Error loading questions:', error);
@@ -118,9 +116,17 @@
                 }
             }
         },
+        watch: {
+            '$route.query.keyword': {
+                handler(newKeyword) {
+                    this.keyword = {...newKeyword};
+                },
+                immediate: true
+            }
+        },
         mounted() {
-            this.loadQuestions();
             this.keyword = this.$route.query.keyword;
+            this.loadQuestions();
         }
     }
 </script>

@@ -105,6 +105,7 @@
 </template>
 
 <script>
+    import SearchBar from '@/components/SearchBar.vue';
     import { mapGetters } from 'vuex';
 
     export default {
@@ -212,6 +213,12 @@
         left: 0;
         width: 100%;
         z-index: 1000;
+    }
+
+    .student-layout .avatar-search-bar {
+        display: flex;
+        align-items: center;
+        gap: 1em;
     }
 
     .student-layout header .page-logo--role {
