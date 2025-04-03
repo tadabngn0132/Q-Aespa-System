@@ -28,7 +28,7 @@ export const voteApi = {
         return res.data;
     }),
     deleteVote: handleError(async voteId => {
-        const res = await apiClient.voteApiClient.delete(`${voteId}`);
+        const res = await apiClient.voteApiClient.delete(`delete/${voteId}`);
         return res.data;
     }),
     createVote: handleError(async (userId, targetId, targetType, vote) => {

@@ -78,11 +78,6 @@ export default {
                         );
                         this.score += 2;
                         this.userVote = 'up';
-                        console.log(existingVote._id, 
-                            userId, 
-                            this.targetId, 
-                            this.targetType,);
-                        
                     }
                 } else {
                     await exportApis.votes.createVote(
@@ -92,11 +87,7 @@ export default {
                         'up'
                     );
                     this.score += 1;
-                    this.userVote = 'up';
-                    console.log(userId, 
-                        this.targetId,
-                        this.targetType);
-                    
+                    this.userVote = 'up';                    
                 }
             } catch (error) {
                 console.error('Error upvoting:', error);
@@ -170,11 +161,9 @@ export default {
                     const existingVote = userVotes.find(vote => 
                         vote.targetId === this.targetId && vote.targetType === this.targetType
                     );
-                    console.log(existingVote.vote);
                     
                     if (existingVote) {
                         this.userVote = existingVote.vote;
-                        
                     } else {
                         this.userVote = null;
                     }

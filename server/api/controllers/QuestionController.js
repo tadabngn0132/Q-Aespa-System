@@ -104,4 +104,13 @@ exports.list_all_unanswered_questions = async (req, res) => {
     } catch (err) {
         res.status(500).send({ message: err.message });
     }
-}
+};
+
+exports.list_all_questions_by_score = async (req, res) => {
+    try {
+        const questions = await questionService.getAllQuestionsByScore();
+        res.json(questions);
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
+};

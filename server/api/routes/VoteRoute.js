@@ -3,7 +3,9 @@ const VoteBuilder = require('../controllers/VoteController');
 module.exports = app => {
     app
         .route('/votes/:id')
-        .get(VoteBuilder.countVotes)
+        .get(VoteBuilder.countVotes);
+    app
+        .route('/votes/delete/:voteId')
         .delete(VoteBuilder.deleteVote);
     app
         .route('/votes/:userId/:targetId')

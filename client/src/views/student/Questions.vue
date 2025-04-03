@@ -133,6 +133,8 @@
                         this.questions = await exportApis.questions.getQuestionsSort('asc');
                     } else if (sortType === 'Unanswered') {
                         this.questions = await exportApis.questions.getQuestionsSort('unanswered');
+                    } else if (sortType === 'Score') {
+                        this.questions = await exportApis.questions.getQuestionsSort('score');
                     }
                     this.questionCount = this.questions.length;
                     this.isLoading = false;

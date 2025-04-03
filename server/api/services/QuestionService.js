@@ -151,6 +151,24 @@ const questionService = {
             }
         }
         return unansweredQuestions;
+    },
+
+    getAllQuestionsByScore: async () => {
+        const questions = await Question.find({})
+            .populate('tags', 'name _id')
+            .populate('userId', 'name email');
+        
+        const questionsWithScores = await Promise.all(
+            questions.map(async (question) => {
+                const score = await voteService.countVotes(question._id);
+                return {
+                    ...question.toObject(),
+                    score
+                };
+            })
+        );
+        
+        return questionsWithScores.sort((a, b) => b.score - a.score);
     }
 };
 

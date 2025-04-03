@@ -15,6 +15,8 @@ module.exports = app => {
                 questionBuilder.list_all_questions_asc(req, res);
             } else if (req.query.sort === 'unanswered') {
                 questionBuilder.list_all_unanswered_questions(req, res);
+            } else if (req.query.sort === 'score') {
+                questionBuilder.list_all_questions_by_score(req, res);
             }
         });
     app
