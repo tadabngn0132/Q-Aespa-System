@@ -115,17 +115,10 @@ const questionService = {
         try {
             let foundQuestions = await Question.find(
                 {"title": {"$regex": keyword, "$options": "i"}}
-            );
-    
-            foundQuestions = await Question.populate(foundQuestions, [
-                {
-                    path: 'tags',
-                    select: '_id name'
-                }, {
-                    path: 'userId',
-                    select: 'name email'
-                }
-            ]);
+            )
+            .populate('tags', 'name _id')
+            .populate('userId', 'name email')
+            .sort({ createdAt: -1 });
             
             return foundQuestions;
         } catch (error) {

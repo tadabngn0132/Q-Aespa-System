@@ -1,11 +1,36 @@
 <template>
     <div class="questions-container">
         <div class="title-page-sort-bar">
-            <h1 class="questions-title">Newest Questions</h1>
-
+            <h1 
+            v-if="!sortType && isSearching === false" class="questions-title">Newest Questions</h1>
+            <h1 
+            v-if="sortType === 'Newest' && isSearching === false" class="questions-title">
+                Newest Questions
+            </h1>
+            <h1 
+            v-if="sortType === 'Oldest' && isSearching === false" class="questions-title">
+                Oldest Questions
+            </h1>
+            <h1 
+            v-if="sortType === 'Unanswered' && isSearching === false" class="questions-title">
+                Unanswered Questions
+            </h1>
+            <h1 
+            v-if="sortType === 'Score' && isSearching === false" class="questions-title">
+                Highest scored questions
+            </h1>
+            <h1 
+            v-if="isSearching === true" class="questions-title">
+            Search Results
+            </h1>
+            
             <sort-bar
+            v-if="!isSearching"
             @sortChanged="sortChanged"></sort-bar>
+
         </div>
+
+        <p v-if="isSearching === true" class="results-for">Results for {{ keyword }}</p>
         
         <!-- <div v-if="isLoading" class="loading-container">
             <div class="loading-spinner"></div>
@@ -117,7 +142,9 @@
                 questions: [],
                 questionCount: 0,
                 isLoading: true,
-                keyword: ''
+                keyword: '',
+                isSearching: false,
+                sortType: ''
             };
         },
         methods: {
@@ -156,14 +183,14 @@
                 try {
                     setTimeout(async () => {
                         if (this.keyword === '' || this.keyword === undefined) {
+                            this.isSearching = false;
                             this.questions = await exportApis.questions.getQuestions();
-                            this.questionCount = this.questions.length;
-                            this.isLoading = false;
                         } else {
+                            this.isSearching = true;
                             this.questions = await exportApis.questions.searchQuestion(this.keyword);
-                            this.questionCount = this.questions.length;
-                            this.isLoading = false;
                         }
+                        this.questionCount = this.questions.length;
+                        this.isLoading = false;
                     }, 500);
                 } catch (error) {
                     console.error('Error loading questions:', error);
@@ -177,12 +204,16 @@
                 setTimeout(async () => {
                     if (sortType === 'Newest') {
                         this.questions = await exportApis.questions.getQuestions();
+                        this.sortType = 'Newest';
                     } else if (sortType === 'Oldest') {
                         this.questions = await exportApis.questions.getQuestionsSort('asc');
+                        this.sortType = 'Oldest';
                     } else if (sortType === 'Unanswered') {
                         this.questions = await exportApis.questions.getQuestionsSort('unanswered');
+                        this.sortType = 'Unanswered';
                     } else if (sortType === 'Score') {
                         this.questions = await exportApis.questions.getQuestionsSort('score');
+                        this.sortType = 'Score';
                     }
                     this.questionCount = this.questions.length;
                     this.isLoading = false;
@@ -222,6 +253,13 @@
     .questions-container .questions-title {
         text-align: left;
         font-weight: normal;
+    }
+
+    .questions-container .results-for {
+        justify-self: left;
+        font-size: 13.5px;
+        margin-bottom: 0.25em;
+        color: #626262;
     }
 
     .questions-container .question-list-cud-btn {

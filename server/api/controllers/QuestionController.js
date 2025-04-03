@@ -114,3 +114,13 @@ exports.list_all_questions_by_score = async (req, res) => {
         res.status(500).send({ message: err.message });
     }
 };
+
+exports.search_questions_asc = async (req, res) => {
+    try {
+        const { keyword } = req.query;
+        const questions = await questionService.searchQuestionsByKeywordAsc(keyword);
+        res.json(questions);
+        } catch (err) {
+        res.status(500).send({ message: err.message });
+        }
+    };

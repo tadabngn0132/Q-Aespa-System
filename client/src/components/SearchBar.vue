@@ -22,8 +22,17 @@
             };
         },
         methods: {
-            validateAndSearch() {            
-                if (this.keyword.trim() && this.keyword.length >= 2) {
+            validateAndSearch() {       
+                if (this.keyword.length < 2) {
+                    this.$showMessage.error('Keyword must be at least 2 characters')
+                    return;
+                }
+                
+                if (this.keyword.trim()) {
+                    if (this.keyword.trim() === this.$route.query.keyword) {
+                        console.log('Keyword does not change, skip...');
+                        return;
+                    }
                     this.$emit('getKeyword', this.keyword.trim());
                 }
             }

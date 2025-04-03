@@ -7,7 +7,13 @@ module.exports = app => {
         .post(questionBuilder.create_a_question);
     app
         .route('/questions/search')
-        .get(questionBuilder.search_questions);
+        .get((req, res) => {
+            if (!req.query.sort) {
+                questionBuilder.search_questions(req, res);
+            } else if (req.query.sort === 'asc') {
+                questionBuilder.search_questions_asc(req, res);
+            }
+        })
     app
         .route('/questions/sort')
         .get((req, res) => {

@@ -1,8 +1,31 @@
 <template>
     <div class="questions-container">
         <div class="question-title--create-btn">
-            <h1 class="questions-title">Newest Questions</h1>
+            <h1 
+            v-if="!sortType && isSearching === false" class="questions-title">Newest Questions</h1>
+            <h1 
+            v-if="sortType === 'Newest' && isSearching === false" class="questions-title">
+                Newest Questions
+            </h1>
+            <h1 
+            v-if="sortType === 'Oldest' && isSearching === false" class="questions-title">
+                Oldest Questions
+            </h1>
+            <h1 
+            v-if="sortType === 'Unanswered' && isSearching === false" class="questions-title">
+                Unanswered Questions
+            </h1>
+            <h1 
+            v-if="sortType === 'Score' && isSearching === false" class="questions-title">
+                Highest scored questions
+            </h1>
+            <h1 
+            v-if="isSearching === true" class="questions-title">
+            Search Results
+            </h1>
+
             <sort-bar
+            v-if="isSearching === false"
             @sortChanged="sortChanged"></sort-bar>
         </div>
         
@@ -110,8 +133,10 @@
                 try {
                     setTimeout(async () => {
                         if (this.keyword === '' || this.keyword === undefined) {
+                            this.isSearching = false;
                             this.questions = await exportApis.questions.getQuestions();
                         } else {
+                            this.isSearching = true;
                             this.questions = await exportApis.questions.searchQuestion(this.keyword);
                         }
                         this.questionCount = this.questions.length;
@@ -173,6 +198,13 @@
 .questions-container .question-title--create-btn .questions-title {
     text-align: left;
     font-weight: normal;
+}
+
+.questions-container .results-for {
+    justify-self: left;
+    font-size: 13.5px;
+    margin-bottom: 0.25em;
+    color: #626262;
 }
 
 .questions-container .question-list-cud-btn .create-btn {
