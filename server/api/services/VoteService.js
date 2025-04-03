@@ -63,7 +63,7 @@ const voteService = {
     getVotesByUserId: async (userId) => {
         const votes = await Vote.find({ userId: userId })
             .populate('userId', 'name email')
-            .populate('questionId', 'title');
+            .populate('targetId', 'title');
 
         return votes;
     }

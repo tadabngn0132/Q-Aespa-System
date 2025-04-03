@@ -1,29 +1,210 @@
 <template>
     <div class="vote-btn-container">
-        <button class="up-vote">
+        <button class="up-vote" @click="upvote" :class="{ active: userVote === 'up' }">
             <i class="fa-solid fa-plus"></i>
         </button>
-        <div class="score">1</div>
-        <button class="down-vote">
+        <div class="score">
+            {{ score }}
+        </div>
+        <button class="down-vote" @click="downvote" :class="{ active: userVote === 'down' }">
             <i class="fa-solid fa-minus"></i>
         </button>
     </div>
 </template>
 
 <script>
-    export default {
-        name: 'VoteButton',
-        props: {
-            question: {
-                type: Object,
-                required: true,
-                default: () => {}
+import exportApis from '@/helpers/api/exportApis';
+import { mapGetters } from 'vuex';
+
+export default {
+    name: 'VoteButton',
+    props: {
+        question: {
+            type: Object,
+            required: false,
+            default: () => {}
+        },
+        answer: {
+            type: Object,
+            required: false,
+            default: () => {}
+        },
+        isQuestion: {
+            type: Boolean,
+            required: true
+        }
+    },
+    data() {
+        return {
+            score: 0,
+            userVote: null
+        }
+    },
+    computed: {
+        ...mapGetters('auth', ['isAuthenticated']),
+        targetId() {
+            return this.isQuestion ? this.question._id : this.answer._id;
+        },
+        targetType() {
+            return this.isQuestion ? 'Question' : 'Answer';
+        }
+    },
+    methods: {
+        async upvote() {
+            if (!this.isAuthenticated) {
+                this.$showMessage.warning('You must be logged in to vote');
+                return;
+            }
+
+            try {
+                const userId = this.$store.state.auth.userId;
+                const userVotes = await exportApis.votes.getVotesByUserId(userId);
+                const existingVote = userVotes.find(vote => 
+                    vote.targetId === this.targetId && vote.targetType === this.targetType
+                );
+
+                if (existingVote) {
+                    if (existingVote.vote === 'up') {
+                        await exportApis.votes.deleteVote(existingVote._id);
+                        this.score -= 1;
+                        this.userVote = null;
+                    } else {
+                        await exportApis.votes.updateVote(
+                            existingVote._id, 
+                            userId, 
+                            this.targetId, 
+                            this.targetType,
+                            'up'
+                        );
+                        this.score += 2;
+                        this.userVote = 'up';
+                        console.log(existingVote._id, 
+                            userId, 
+                            this.targetId, 
+                            this.targetType,);
+                        
+                    }
+                } else {
+                    await exportApis.votes.createVote(
+                        userId, 
+                        this.targetId,
+                        this.targetType,
+                        'up'
+                    );
+                    this.score += 1;
+                    this.userVote = 'up';
+                    console.log(userId, 
+                        this.targetId,
+                        this.targetType);
+                    
+                }
+            } catch (error) {
+                console.error('Error upvoting:', error);
+                this.$showMessage.error('Failed to upvote. Please try again');
             }
         },
-        methods: {
-            
+        
+        async downvote() {
+            if (!this.isAuthenticated) {
+                this.$showMessage.warning('You must be logged in to vote');
+                return;
+            }
+
+            try {
+                const userId = this.$store.state.auth.userId;
+                const userVotes = await exportApis.votes.getVotesByUserId(userId);
+                const existingVote = userVotes.find(vote => 
+                    vote.targetId === this.targetId && vote.targetType === this.targetType
+                );
+
+                if (existingVote) {
+                    if (existingVote.vote === 'down') {
+                        await exportApis.votes.deleteVote(existingVote._id);
+                        this.score += 1;
+                        this.userVote = null;
+                    } else {
+                        await exportApis.votes.updateVote(
+                            existingVote._id, 
+                            userId, 
+                            this.targetId,
+                            this.targetType,
+                            'down'
+                        );
+                        this.score -= 2;
+                        this.userVote = 'down';
+                    }
+                } else {
+                    await exportApis.votes.createVote(
+                        userId, 
+                        this.targetId,
+                        this.targetType,
+                        'down'
+                    );
+                    this.score -= 1;
+                    this.userVote = 'down';
+                }
+            } catch (error) {
+                console.error('Error downvoting:', error);
+                this.$showMessage.error('Failed to downvote. Please try again');
+            }
+        },
+        
+        async fetchScore() {
+            try {
+                if (this.isQuestion && this.question && this.question._id) {
+                    this.score = await exportApis.votes.countVote(this.question._id);
+                } else if (!this.isQuestion && this.answer && this.answer._id) {
+                    this.score = await exportApis.votes.countVote(this.answer._id);
+                }
+            } catch (error) {
+                console.error('Error fetching vote score:', error);
+            }
+        },
+        
+        async checkUserVote() {
+            if (this.isAuthenticated) {
+                try {
+                    const userId = this.$store.state.auth.userId;
+                    const userVotes = await exportApis.votes.getVotesByUserId(userId);
+                    
+                    const existingVote = userVotes.find(vote => 
+                        vote.targetId === this.targetId && vote.targetType === this.targetType
+                    );
+                    console.log(existingVote.vote);
+                    
+                    if (existingVote) {
+                        this.userVote = existingVote.vote;
+                        
+                    } else {
+                        this.userVote = null;
+                    }
+                } catch (error) {
+                    console.error('Error checking user vote:', error);
+                }
+            }
+        }
+    },
+    async mounted() {
+        await this.fetchScore();
+        await this.checkUserVote();
+    },
+    watch: {
+        question: {
+            handler() {
+                this.fetchScore();
+                this.checkUserVote();
+            },
+            deep: true
+        },
+        answer: {
+            handler() {
+                this.fetchScore();
+                this.checkUserVote();
+            },
+            deep: true
         }
     }
+}
 </script>
 
 <style scoped>
@@ -60,9 +241,17 @@
         box-shadow: none;
         background-color: #8BCAD9;
     }
+    
+    .vote-btn-container .up-vote.active,
+    .vote-btn-container .down-vote.active {
+        background-color: #8BCAD9;
+        border: 0.1em solid #8BCAD9;
+        color: white;
+    }
 
     .vote-btn-container .score {
         font-size: 19px;
         font-weight: bold;
+        text-align: center;
     }
 </style>

@@ -15,7 +15,7 @@ exports.createVote = async (req, res) => {
         const { userId, targetId } = req.params;
         const { targetType, vote } = req.body;
 
-        const newVote = await voteService.countVotes(userId, targetId, targetType, vote);
+        const newVote = await voteService.createVote(userId, targetId, targetType, vote);
         res.json(newVote);
     } catch (err) {
         res.status(500).send({ message: err.message });

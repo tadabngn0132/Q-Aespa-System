@@ -43,7 +43,9 @@
             </div>
     
             <div class="vote-btn-description">
-                <vote-button></vote-button>
+                <vote-button
+                :question="question"
+                :isQuestion="true"></vote-button>
 
                 <div class="question-description">
                     {{ question.description }}
