@@ -12,7 +12,17 @@
 
 <script>
     export default {
-        name: 'VoteButton'
+        name: 'VoteButton',
+        props: {
+            question: {
+                type: Object,
+                required: true,
+                default: () => {}
+            }
+        },
+        methods: {
+            
+        }
     }
 </script>
 

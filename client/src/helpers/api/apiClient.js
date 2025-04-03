@@ -59,6 +59,7 @@ const userApiClient = createApiClient('users/');
 const registerApiClient = createApiClient('register/');
 const loginApiClient = createApiClient('login/');
 const changepasswordApiClient = createApiClient('changepassword/');
+const voteApiClient = createApiClient('votes/');
 
 const setupAuthToken = (token) => {
     if (token) {
@@ -76,6 +77,7 @@ export default {
     registerApiClient,
     loginApiClient,
     changepasswordApiClient,
+    voteApiClient,
 
     setupAuthToken,
     getToken: () => localStorage.getItem('token'),

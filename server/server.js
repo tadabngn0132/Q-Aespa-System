@@ -16,6 +16,9 @@ const userRoutes = require('./api/routes/UserRoute');
 global.Tag = require('./api/models/TagModel');
 const tagRoutes = require('./api/routes/TagRoute');
 
+global.Vote = require('./api/models/VoteModel');
+const voteRoutes = require('./api/routes/VoteRoute');
+
 const username = encodeURIComponent(process.env.MONGO_USER);
 const password = encodeURIComponent(process.env.MONGO_PASSWORD);
 const dbName = encodeURIComponent(process.env.MONGO_DB);
@@ -41,6 +44,7 @@ questionRoutes(app);
 answerRoutes(app);
 userRoutes(app);
 tagRoutes(app);
+voteRoutes(app);
 
 app.use((req, res) => {
     res.status(404).send({ url: `${req.originalUrl} not found`})
