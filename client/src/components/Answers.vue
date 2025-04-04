@@ -38,9 +38,15 @@
                         {{ 'modified at ' + formatDate(answer.updatedAt) }}
                     </span>
                 </div>
-                <span class="answer-description">
-                    {{ answer.description }}
-                </span>
+                <div class="description-vote-btn">
+                    <vote-button
+                    :answer="answer"
+                    :isQuestion="false"></vote-button>
+
+                    <span class="answer-description">
+                        {{ answer.description }}
+                    </span>
+                </div>
                 <div class="ud-btn" v-if="canEditAnswer(answer)">
                     <button class="edit-btn" @click="startEdit(answer)">Edit</button>
                     <button class="delete-btn" @click="deleteAnswer(answer._id)">Delete</button>
@@ -61,11 +67,13 @@ import exportApis from '@/helpers/api/exportApis';
 import AnswerForm from './AnswerForm.vue';
 import { mapGetters } from 'vuex';
 import dayjs from 'dayjs';
+import VoteButton from './VoteButton.vue';
 
 export default {
     name: 'Answers',
     components: {
-        'answer-form': AnswerForm
+        'answer-form': AnswerForm,
+        'vote-button': VoteButton
     },
     props: {
         question: {
@@ -306,12 +314,17 @@ export default {
     color: #3498db;
 }
 
+.description-vote-btn {
+    display: flex;
+    margin: 10px 0;
+    gap: 1em;
+}
+
 .answer-description {
     flex: 1;
     word-break: break-word;
     line-height: 1.5;
     font-size: 15px;
-    margin: 10px 0;
 }
 
 .ud-btn {
