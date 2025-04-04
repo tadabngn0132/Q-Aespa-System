@@ -115,7 +115,8 @@
                 questions: [],
                 questionCount: 0,
                 isLoading: true,
-                keyword: ''
+                keyword: '',
+                sortType: ''
             };
         },
         methods: {
@@ -154,12 +155,16 @@
                 setTimeout(async () => {
                     if (sortType === 'Newest') {
                         this.questions = await exportApis.questions.getQuestions();
+                        this.sortType = 'Newest';
                     } else if (sortType === 'Oldest') {
                         this.questions = await exportApis.questions.getQuestionsSort('asc');
+                        this.sortType = 'Oldest';
                     } else if (sortType === 'Unanswered') {
                         this.questions = await exportApis.questions.getQuestionsSort('unanswered');
+                        this.sortType = 'Unanswered';
                     } else if (sortType === 'Score') {
                         this.questions = await exportApis.questions.getQuestionsSort('score');
+                        this.sortType = 'Score';
                     }
                     this.questionCount = this.questions.length;
                     this.isLoading = false;
