@@ -89,3 +89,29 @@ exports.changePassword = async (req, res) => {
         });
     }
 };
+
+exports.forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        
+        if (!email) {
+            return res.status(400).json({ message: 'Email is required' });
+        }
+
+        try {
+            await AuthService.forgotPassword(email);
+        } catch (error) {
+            if (error.message !== 'User not found') {
+                console.error('Error in password reset:', error);
+            }
+        }
+
+        return res.status(200).json({ 
+            message: 'If your email exists in our system, you will receive a password reset email shortly.' 
+        });
+        
+    } catch (error) {
+        console.error('Error in forgot password:', error);
+        res.status(500).json({ message: 'An error occurred while processing your request' });
+    }
+};

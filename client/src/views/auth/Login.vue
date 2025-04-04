@@ -40,7 +40,7 @@
 
         <div class="btn_fg_password">
             <button class="auth-btn">Sign in</button>
-            <label for="" class="change-lbl">Forgot your password?</label> 
+            <router-link to="/forgot-password" class="change-lbl">Forgot your password?</router-link> 
         </div>
 
         <label for="" class="change-lbl">Don't have account? 

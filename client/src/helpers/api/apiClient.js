@@ -54,6 +54,7 @@ const createApiClient = (path) => {
 
 const questionApiClient = createApiClient('questions/');
 const answerApiClient = createApiClient('');
+const authApiClient = createApiClient('');
 const tagApiClient = createApiClient('tags/');
 const userApiClient = createApiClient('users/');
 const registerApiClient = createApiClient('register/');
@@ -74,6 +75,7 @@ export default {
     answerApiClient,
     tagApiClient,
     userApiClient,
+    authApiClient,
     registerApiClient,
     loginApiClient,
     changepasswordApiClient,

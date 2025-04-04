@@ -245,7 +245,7 @@
 
     .admin-layout header nav.original-nav {
         display: flex;
-        margin-left: 7.5em;
+        margin-right: 7.5em;
     }
 
     .auth--nav-icon {

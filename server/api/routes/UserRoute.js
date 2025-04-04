@@ -19,4 +19,7 @@ module.exports = app => {
         .get(UserBuilder.read_a_user)
         .put(UserBuilder.update_a_user)
         .delete(UserBuilder.delete_a_user);
+    app
+    .route('/forgot-password')
+    .post(AuthBuilder.forgotPassword);
 };

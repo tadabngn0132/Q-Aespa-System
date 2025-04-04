@@ -56,5 +56,9 @@ export const authApi = {
             newPassword: passwordData.newPassword
         });
         return res.data;
+    }),
+    forgotPassword: handleError(async (email) => {
+        const res = await apiClient.authApiClient.post('forgot-password', { email });
+        return res.data;
     })
 };

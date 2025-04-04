@@ -1,5 +1,10 @@
 const mongoose = require('mongoose');
 const Answer = mongoose.model('Answer');
+require('../models/QuestionModel');
+const Question = mongoose.model('Question');
+require('../models/UserModel');
+const User = mongoose.model('User');
+const emailService = require('./EmailService');
 
 const answerService = {
     getAnswers: async () => {
@@ -29,7 +34,30 @@ const answerService = {
 
     createAnswer: async (answerData) => {
         const newAnswer = new Answer(answerData);
-        return await newAnswer.save();
+        const savedAnswer = await newAnswer.save();
+
+        const question = await Question.findById(answerData.questionId)
+            .populate('userId');
+        
+        if (question && question.userId) {
+            const user = await User.findById(question.userId._id || question.userId);
+            
+            if (user) {
+                try {
+                    await emailService.sendAnswerNotification(
+                        user.email,
+                        user.name,
+                        question.title,
+                        question._id
+                    );
+                } catch (emailError) {
+                    console.error('Error sending answer notification:', emailError);
+                    // Continue since the answer was already created successfully
+                }
+            }
+        }
+
+        return savedAnswer;
     },
 
     updateAnswer: async (answerId, answerData) => {

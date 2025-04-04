@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs');
 const User = require('../models/UserModel');
 const jwt = require('jsonwebtoken');
+const emailService = require('./EmailService');
+const { generateRandomPassword } = require('../utils/PasswordUtils');
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET || 'fallback-secret-key';
 
@@ -39,6 +41,13 @@ exports.registerUser = async (userData) => {
     });
 
     await newUser.save();
+
+    try {
+        await emailService.sendWelcomeEmail(email, name);
+    } catch (emailError) {
+        console.error('Error sending welcome email:', emailError);
+    }
+
     return newUser;
 }
 
@@ -97,4 +106,21 @@ exports.changePassword = async (userId, currentPassword, newPassword) => {
         updateData,
         { new: true }
     ).select('-password');
+};
+
+exports.forgotPassword = async (email) => {
+    const user = await User.findOne({ email });
+        
+    if (!user) {
+        throw new Error('User not found');
+    }
+    
+    const newPassword = generateRandomPassword();
+    
+    const hashedPassword = await AuthService.hashPassword(newPassword);
+    
+    user.password = hashedPassword;
+    await user.save();
+    
+    await emailService.sendPasswordReset(user.email, user.name, newPassword);
 };

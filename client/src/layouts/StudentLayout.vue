@@ -21,8 +21,8 @@
                         </router-link>
                     </li>
                     <li>
-                        <router-link class="router-link" to="/student/questions" exact-active-class="nav-router-link-active">
-                            <span>Questions</span>
+                        <router-link class="router-link" to="/student/questions" exact-active-class="router-link-active">
+                            Questions
                         </router-link>
                     </li>
                     <li>
@@ -244,7 +244,7 @@
 
     .student-layout header nav.original-nav {
         display: flex;
-        margin-left: 7.5em;
+        margin-right: 7.5em;
     }
 
     .auth--nav-icon {
