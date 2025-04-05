@@ -91,7 +91,7 @@ const tagService = {
             })
         );
 
-        return tagsWithQuestionCount.sort((a, b) => b.questionQuantity = a.questionQuantity);
+        return tagsWithQuestionCount.sort((a, b) => b.questionQuantity - a.questionQuantity);
     }
 };
 

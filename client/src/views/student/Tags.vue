@@ -52,8 +52,6 @@
                 return description;
             },
             async sortChanged(sortType) {
-                this.isLoading = true;
-
                 if (sortType === 'Newest') {
                     this.questions = await exportApis.tags.getTags();
                     this.sortType = 'Newest';

@@ -97,16 +97,14 @@
                 this.tags = newTags;
             },
             async sortChanged(sortType) {
-                this.isLoading = true;
-
                 if (sortType === 'Newest') {
-                    this.questions = await exportApis.tags.getTags();
+                    this.tags = await exportApis.tags.getTags();
                     this.sortType = 'Newest';
                 } else if (sortType === 'Name') {
-                    this.questions = await exportApis.tags.getTagsSort('name');
+                    this.tags = await exportApis.tags.getTagsSort('name');
                     this.sortType = 'Name';
                 } else if (sortType === 'Popular') {
-                    this.questions = await exportApis.tags.getTagsSort('popular');
+                    this.tags = await exportApis.tags.getTagsSort('popular');
                     this.sortType = 'Popular';
                 }
             }
