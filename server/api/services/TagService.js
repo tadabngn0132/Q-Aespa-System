@@ -4,8 +4,20 @@ const questionService = require('./QuestionService');
 
 const tagService = {
     getAllTags: async () => {
-        return await Tag.find({})
+        const tags = await Tag.find({})
             .sort({ createdAt: -1 });
+
+        const tagsWithQuestionCount = await Promise.all(
+            tags.map(async (tag) => {
+                const questionQuantity = await questionService.countQuestionByTag(tag._id);
+                return {
+                    ...tag.toObject(),
+                    questionQuantity
+                };
+            })
+        );
+
+        return tagsWithQuestionCount;
     },
 
     getTagById: async (tagId) => {
@@ -74,8 +86,20 @@ const tagService = {
     },
 
     getAllTagsByName: async () => {
-        return await Tag.find({})
+        const tags = await Tag.find({})
             .sort({ name: 1 });
+
+        const tagsWithQuestionCount = await Promise.all(
+            tags.map(async (tag) => {
+                const questionQuantity = await questionService.countQuestionByTag(tag._id);
+                return {
+                    ...tag.toObject(),
+                    questionQuantity
+                };
+            })
+        );
+
+        return tagsWithQuestionCount;
     },
 
     getAllTagsByQuestionCount: async () => {

@@ -7,6 +7,11 @@
         </p>
 
         <div class="search-sort">
+            <search-bar
+            @filterTag="filterTag"
+            :forTag="true"
+            :resetSearch="resetSearch"></search-bar>
+
             <sort-bar
             @sortChanged="sortChanged"
             :forTag="true"></sort-bar>
@@ -24,6 +29,15 @@
                 <span class="tag-desctiption">
                     {{ getTruncatedDescription(tag.description) }}
                 </span>
+
+                <div class="question-quantity-created-time">
+                    <span class="question-quantity">
+                        {{ tag.questionQuantity }} questions
+                    </span>
+                    <span class="created-time">
+                        created {{ formatRelativeTime(tag.createdAt) }}
+                    </span>
+                </div>
             </li>
         </ul>
     </div>
@@ -32,40 +46,72 @@
 <script>
     import SortBar from '@/components/SortBar.vue';
     import exportApis from '@/helpers/api/exportApis';
+    import SearchBar from '@/components/SearchBar.vue';
+    import dayjs from 'dayjs';
+    import relativeTime from 'dayjs/plugin/relativeTime';
 
+    dayjs.extend(relativeTime);
+    
     export default {
         name: 'AdminTags',
         components: {
-            'sort-bar': SortBar
+            'sort-bar': SortBar,
+            'search-bar': SearchBar
         },
         data() {
             return {
                 tagSpecification: 'A tag is a keyword or label that categorizes your question with other, similar questions. Using the right tags makes it easier for others to find and answer your question.',
-                tags: []
+                tags: [],
+                originalTags: [],
+                resetSearch: false
             }
         },
         methods: {
             getTruncatedDescription: function(description) {
-                if (description && description.length > 125) {
-                    return description.substring(0, 125) + '...';
+                if (description && description.length > 150) {
+                    return description.substring(0, 150) + '...';
                 }
                 return description;
             },
             async sortChanged(sortType) {
+                this.resetSearch = true;
+
                 if (sortType === 'Newest') {
-                    this.questions = await exportApis.tags.getTags();
+                    this.tags = await exportApis.tags.getTags();
+                    this.originalTags = this.tags;
                     this.sortType = 'Newest';
+                    this.resetSearch = false;
                 } else if (sortType === 'Name') {
-                    this.questions = await exportApis.tags.getTagsSort('name');
+                    this.tags = await exportApis.tags.getTagsSort('name');
+                    this.originalTags = this.tags;
                     this.sortType = 'Name';
+                    this.resetSearch = false;
                 } else if (sortType === 'Popular') {
-                    this.questions = await exportApis.tags.getTagsSort('popular');
+                    this.tags = await exportApis.tags.getTagsSort('popular');
+                    this.originalTags = this.tags;
                     this.sortType = 'Popular';
+                    this.resetSearch = false;
                 }
+            },
+            formatRelativeTime(timestamp) {
+                return dayjs(timestamp).fromNow();
+            },
+            filterTag(tagname) {
+                if (!tagname) {
+                    this.tags = this.originalTags;
+                    return;
+                }
+                
+                const foundTags = this.tags.filter(tag => 
+                    tag.name.toLowerCase().includes(tagname.toLowerCase())
+                );
+
+                this.tags = foundTags;
             }
         },
         async mounted() {
             this.tags = await exportApis.tags.getTags();
+            this.originalTags = this.tags;
         }
     }
 </script>
@@ -143,6 +189,33 @@
         margin-bottom: 1em;
     }
 
+    .search-sort {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2em;
+        gap: 1em;
+    }
+
+    .question-quantity-created-time {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+        font-size: 0.85rem;
+        color: #777;
+    }
+
+    .question-quantity {
+        display: flex;
+        align-items: center;
+    }
+
+    .created-time {
+        display: flex;
+        align-items: center;
+        font-style: italic;
+    }
 
     @keyframes fadeIn {
         from {
@@ -199,6 +272,13 @@
         .tag-title-create-btn .create-btn {
             font-size: 0.9rem;
             padding: 8px 16px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .question-quantity-created-time {
+            flex-direction: column;
+            gap: 0.25em;
         }
     }
 </style>

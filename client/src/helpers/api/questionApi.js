@@ -54,5 +54,9 @@ export const questionApi = {
     getQuestionsSort: handleError(async (sortType) => {
         const res = await apiClient.questionApiClient.get(`sort?sort=${encodeURIComponent(sortType)}`);
         return res.data;
+    }),
+    countQuestionByTagId: handleError(async tagId => {
+        const res = await apiClient.questionApiClient.get(`/questionCount/${tagId}`);
+        return res.data;
     })
 };

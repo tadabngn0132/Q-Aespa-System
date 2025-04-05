@@ -36,4 +36,8 @@ module.exports = app => {
         .get(questionBuilder.read_a_question)
         .put(questionBuilder.update_a_question)
         .delete(questionBuilder.delete_a_question);
+
+    app
+        .route('/questions/questionCount/:tagId')
+        .get(questionBuilder.countQuestionByTagId);
 };

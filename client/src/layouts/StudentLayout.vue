@@ -10,6 +10,7 @@
 
                 <search-bar 
                 @getKeyword="getKeyword"
+                :forTag="false"
                 ></search-bar>
             </div>
 

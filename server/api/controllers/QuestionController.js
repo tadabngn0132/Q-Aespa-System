@@ -115,12 +115,11 @@ exports.list_all_questions_by_score = async (req, res) => {
     }
 };
 
-exports.search_questions_asc = async (req, res) => {
+exports.countQuestionByTagId = async (req, res) => {
     try {
-        const { keyword } = req.query;
-        const questions = await questionService.searchQuestionsByKeywordAsc(keyword);
-        res.json(questions);
-        } catch (err) {
-        res.status(500).send({ message: err.message });
-        }
-    };
+        const questionQuantity = await questionService.countQuestionByTag(req.params.tagId);
+        res.json(questionQuantity);
+    } catch (err) {
+        res.status(500).send({ message: err.message })
+    }
+}
