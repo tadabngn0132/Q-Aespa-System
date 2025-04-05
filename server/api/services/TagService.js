@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
 const Tag = mongoose.model('Tag');
+const questionService = require('./QuestionService');
 
 const tagService = {
     getAllTags: async () => {
         return await Tag.find({})
-            .sort({ createdAt: 1 });
+            .sort({ createdAt: -1 });
     },
 
     getTagById: async (tagId) => {
@@ -54,6 +55,43 @@ const tagService = {
 
         await Tag.deleteOne({ _id: tagId });
         return tagId;
+    },
+
+    searchTagByKeywordAbsolute: async (keyword) => {
+        try {
+            const foundTag = await Tag.find(
+                {"name": {"$search": keyword}}
+            );
+
+            if (!foundTag) {
+                throw new Error('Tag not found');
+            }
+    
+            return foundTag;
+        } catch (error) {
+            console.error("Finding tag keyword error", error);            
+        }
+    },
+
+    getAllTagsByName: async () => {
+        return await Tag.find({})
+            .sort({ name: 1 });
+    },
+
+    getAllTagsByQuestionCount: async () => {
+        const tags = await Tag.find({});
+
+        const tagsWithQuestionCount = await Promise.all(
+            tags.map(async (tag) => {
+                const questionQuantity = await questionService.countQuestionByTag(tag._id);
+                return {
+                    ...tag.toObject(),
+                    questionQuantity
+                };
+            })
+        );
+
+        return tagsWithQuestionCount.sort((a, b) => b.questionQuantity = a.questionQuantity);
     }
 };
 

@@ -1,8 +1,19 @@
 <template>
     <div class="sort-bar-container">
-        <ul class="sort-items-list">
+        <ul v-if="!forTag" class="sort-items-list">
             <li 
             v-for="sortType in ['Newest', 'Oldest', 'Unanswered', 'Score']" 
+            :key="sortType"
+            :class="['sort-items', { active: activeSort === sortType }]"
+            @click="setSort(sortType)"
+            >
+                {{ sortType }}
+            </li>
+        </ul>
+
+        <ul v-else class="sort-items-list">
+            <li 
+            v-for="sortType in ['Newest', 'Name', 'Popular']" 
             :key="sortType"
             :class="['sort-items', { active: activeSort === sortType }]"
             @click="setSort(sortType)"
@@ -16,6 +27,12 @@
 <script>
     export default {
         name: 'SortBar',
+        props: {
+            forTag: {
+                type: Boolean,
+                required: true
+            }
+        },
         data() {
             return {
                 activeSort: 'Newest'

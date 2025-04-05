@@ -42,5 +42,9 @@ export const tagApi = {
     deleteTag: handleError(async id => {
         const res = await apiClient.tagApiClient.delete(`${id}`);
         return res.data;
+    }),
+    getTagsSort: handleError(async sortType => {
+        const res = await apiClient.tagApiClient.get(`sort?sort=${encodeURIComponent(sortType)}`);
+        return res.data;
     })
 };

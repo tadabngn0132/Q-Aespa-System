@@ -162,6 +162,12 @@ const questionService = {
         );
         
         return questionsWithScores.sort((a, b) => b.score - a.score);
+    },
+
+    countQuestionByTag: async (tagId) => {
+        const questionQuantity = await Question.countDocuments({ tags: tagId });
+        
+        return questionQuantity;
     }
 };
 

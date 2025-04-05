@@ -24,7 +24,7 @@ const TagSchema = new Schema(
     }
 );
 
-TagSchema.index({ title: 'text' });
-TagSchema.index({ title: 1 })
+TagSchema.index({ name: 'text' });
+TagSchema.index({ name: 1 })
 
 module.exports = mongoose.model('Tag', TagSchema);

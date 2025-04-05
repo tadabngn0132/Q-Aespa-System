@@ -26,7 +26,8 @@
             
             <sort-bar
             v-if="!isSearching"
-            @sortChanged="sortChanged"></sort-bar>
+            @sortChanged="sortChanged"
+            :forTag="false"></sort-bar>
 
         </div>
 

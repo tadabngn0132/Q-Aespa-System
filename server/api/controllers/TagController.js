@@ -47,3 +47,21 @@ exports.delete_a_tag = async (req, res) => {
         res.status(404).send({ message: err.message });
     }
 };
+
+exports.list_all_tags_by_name = async (req, res) => {
+    try {
+        const tags = await tagService.getAllTagsByName();
+        res.json(tags);
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
+};
+
+exports.list_all_tags_by_question_count = async (req, res) => {
+    try {
+        const tags = await tagService.getAllTagsByQuestionCount();
+        res.json(tags);
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
+};

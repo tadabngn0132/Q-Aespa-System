@@ -13,6 +13,12 @@
             {{ tagSpecification }}
         </p>
 
+        <div class="search-sort">
+            <sort-bar
+            @sortChanged="sortChanged"
+            :forTag="true"></sort-bar>
+        </div>
+
         <ul class="tags-list">
             <li 
             v-for="(tag, i) in tags" 
@@ -61,10 +67,14 @@
 </template>
 
 <script>
-import exportApis from '@/helpers/api/exportApis';
+    import SortBar from '@/components/SortBar.vue';
+    import exportApis from '@/helpers/api/exportApis';
 
     export default {
         name: 'AdminTags',
+        components: {
+            'sort-bar': SortBar
+        },
         data() {
             return {
                 tagSpecification: 'A tag is a keyword or label that categorizes your question with other, similar questions. Using the right tags makes it easier for others to find and answer your question.',
@@ -85,6 +95,20 @@ import exportApis from '@/helpers/api/exportApis';
                 this.$showMessage.success('Tag deleted successfully!');
                 const newTags = this.tags.filter(tag => tag._id !== id);
                 this.tags = newTags;
+            },
+            async sortChanged(sortType) {
+                this.isLoading = true;
+
+                if (sortType === 'Newest') {
+                    this.questions = await exportApis.tags.getTags();
+                    this.sortType = 'Newest';
+                } else if (sortType === 'Name') {
+                    this.questions = await exportApis.tags.getTagsSort('name');
+                    this.sortType = 'Name';
+                } else if (sortType === 'Popular') {
+                    this.questions = await exportApis.tags.getTagsSort('popular');
+                    this.sortType = 'Popular';
+                }
             }
         },
         async mounted() {

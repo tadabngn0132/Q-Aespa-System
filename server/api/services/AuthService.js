@@ -117,7 +117,7 @@ exports.forgotPassword = async (email) => {
     
     const newPassword = generateRandomPassword();
     
-    const hashedPassword = await AuthService.hashPassword(newPassword);
+    const hashedPassword = await this.hashPassword(newPassword);
     
     user.password = hashedPassword;
     await user.save();

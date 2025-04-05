@@ -84,7 +84,7 @@
                 </span>
             </label>
 
-            <div class="role-choice">
+            <div v-if="isAdmin" class="role-choice">
                 <div class="choice">
                     <input 
                     type="radio" 
@@ -106,6 +106,13 @@
                 </div>
             </div>
 
+            <input 
+            v-else-if="isEditing === true" 
+            type="role" 
+            class="role"
+            disabled
+            v-model="user.role">
+
             <button type="submit">
                 Submit
             </button>
@@ -116,6 +123,7 @@
 <script>
 import { validateCreateUser } from '@/helpers/validator/userValidator';
 import { validateEditUser } from '@/helpers/validator/userValidator';
+import { mapGetters } from 'vuex';
 
 export default {
     name: 'UserForm',
@@ -150,6 +158,9 @@ export default {
                 password: []
             }
         }
+    },
+    computed: {
+        ...mapGetters('auth', ['isAdmin'])
     },
     methods: {
         async onSubmit() {
@@ -247,7 +258,8 @@ export default {
 
 .user-form input.name-input,
 .user-form input.email,
-.user-form input.password {
+.user-form input.password,
+.user-form input.role {
     width: 100%;
     padding: 0.75rem 1rem;
     margin-bottom: 1rem;
