@@ -74,6 +74,11 @@
                                     @click="setActiveSettingItem(1)">
                                     Change Password
                                 </li>
+                                <li class="setting-item"
+                                    :class="{ active: activeSettingTab === 2 }"
+                                    @click="setActiveSettingItem(2)">
+                                    Forgot Password
+                                </li>
                             </ul>
                         </nav>
                     </div>
@@ -91,6 +96,10 @@
                         <div class="content">
                             <change-password></change-password>
                         </div>
+                        <div class="content">
+                            <forgot-password
+                            :user="currentUser"></forgot-password>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -103,12 +112,14 @@ import { mapGetters } from 'vuex';
 import exportApis from '@/helpers/api/exportApis';
 import UserForm from './UserForm.vue';
 import ChangePasswordForm from './ChangePasswordForm.vue';
+import ForgotPasswordForm from './ForgotPasswordForm.vue';
 
 export default {
     name: 'Profile',
     components: {
         'user-form': UserForm,
-        'change-password': ChangePasswordForm
+        'change-password': ChangePasswordForm,
+        'forgot-password': ForgotPasswordForm
     },
     data() {
         return {

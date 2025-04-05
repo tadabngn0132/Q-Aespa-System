@@ -91,7 +91,7 @@ const emailService = {
      * Send password reset email
      * @param {string} to - User's email address
      * @param {string} name - User's name
-     * @param {string} resetToken - Password reset token
+     * @param {string} newPassword - Password reset token
      * @returns {Promise} - Resolves with info about the sent email
      */
     sendPasswordReset: async (to, name, newPassword) => {

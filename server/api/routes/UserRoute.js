@@ -20,6 +20,6 @@ module.exports = app => {
         .put(UserBuilder.update_a_user)
         .delete(UserBuilder.delete_a_user);
     app
-    .route('/forgot-password')
-    .post(AuthBuilder.forgotPassword);
+        .route('/forgot-password')
+        .post(AuthBuilder.forgotPassword);
 };

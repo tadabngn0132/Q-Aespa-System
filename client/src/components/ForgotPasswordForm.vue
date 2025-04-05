@@ -1,12 +1,12 @@
 <template>
-    <div class="forgot-password-container">
+    <div class="forgot-password-container" id="container">
         <form @submit.prevent="submitForm" class="forgot-password-form">
             <h1>Forgot Password</h1>
             <p class="instruction">Enter your email address below and we'll send you a new password.</p>
             
             <div class="form-group">
             <label for="email">Email Address</label>
-            <input 
+            <input
                 type="email" 
                 id="email"
                 v-model="email" 
@@ -23,7 +23,7 @@
             {{ message }}
             </div>
             
-            <div class="back-to-login">
+            <div v-if="!isAuthenticated" class="back-to-login">
             <router-link to="/login">Back to Login</router-link>
             </div>
         </form>
@@ -32,9 +32,17 @@
 
 <script>
 import exportApis from '@/helpers/api/exportApis';
+import { mapGetters } from 'vuex';
 
 export default {
     name: 'ForgotPassword',
+    props: {
+        user: {
+            type: Object,
+            required: false,
+            default: () => {}
+        }
+    },
     data() {
         return {
             email: '',
@@ -42,6 +50,9 @@ export default {
             message: '',
             messageType: ''
         };
+    },
+    computed: {
+        ...mapGetters('auth', ['isAuthenticated'])
     },
     methods: {
         async submitForm() {
@@ -61,6 +72,19 @@ export default {
                 this.isSubmitting = false;
             }
         }
+    },
+    async mounted() {
+        const container = document.getElementById('container');
+
+        if (this.isAuthenticated) {
+            container.style.minHeight = 'unset';
+        } else {
+            container.style.minHeight = '90vh';
+        }
+
+        if (this.isAuthenticated) {
+            this.email = this.user.email
+        }
     }
 };
 </script>
@@ -70,7 +94,6 @@ export default {
         display: flex;
         justify-content: center;
         align-items: center;
-        min-height: 80vh;
         padding: 20px;
     }
     
@@ -109,7 +132,7 @@ export default {
     }
     
     input {
-        width: 94.5%;
+        width: 100%;
         padding: 10px;
         border: 1px solid #ddd;
         border-radius: 0.75em;
