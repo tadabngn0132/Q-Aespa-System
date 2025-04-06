@@ -70,7 +70,7 @@ const routes = [
                 component: () => import('@/views/admin/Users.vue')
             },
             {
-                path: '/admin/search',
+                path: '/admin/searchuser',
                 name: 'AdminSearchUser',
                 component: () => import('@/views/admin/Users.vue')
             },

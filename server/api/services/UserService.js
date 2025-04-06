@@ -71,6 +71,13 @@ const userService = {
         }
 
         return user;
+    },
+    searchUser: async (keyword) => {
+        let foundUsers = await User.find(
+            { "name": {"$regex": keyword, "$options": "i" }}
+        );
+
+        return foundUsers;
     }
 }
 

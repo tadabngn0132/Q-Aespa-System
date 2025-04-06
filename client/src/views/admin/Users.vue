@@ -9,8 +9,13 @@
             </router-link>
         </div>
 
+        <div v-if="isLoading" class="loading-container">
+            <div class="loading-spinner"></div>
+            <p>Loading questions...</p>
+        </div>
+
         <ul 
-        v-if="users.length > 0" 
+        v-else-if="users.length > 0" 
         class="users-list">
             <li
             v-for="(user, i) in users" 
@@ -60,7 +65,9 @@ export default {
     name: 'AdminUsers',
     data() {
         return {
-            users: []
+            users: [],
+            isLoading: true,
+            keyword: ''
         }
     },
     methods: {
@@ -71,10 +78,40 @@ export default {
             this.$showMessage.success('User deleted successfully!');
             const newUsers = this.users.filter(user => user._id !== id);
             this.users = newUsers;
+        },
+        async loadUsers() {
+            this.isLoading = true;
+            try {
+                setTimeout(async () => {
+                    if (this.keyword === '' || this.keyword === undefined) {
+                        this.isSearching = false;
+                        this.users = await exportApis.users.getUsers();
+                    } else {
+                        this.isSearching = true;
+                        this.users = await exportApis.users.searchUsers(this.keyword);
+                    }
+                    this.isLoading = false;
+                }, 500);
+            } catch (error) {
+                console.error('Error loading questions:', error);
+                this.isLoading = false;
+                this.$showMessage.error('Error loading questions. Please try again.');
+            }
         }
     },
     async mounted() {
-        this.users = await exportApis.users.getUsers();
+        this.keyword = this.$route.query.fullname;
+    
+        this.loadUsers();
+    },
+    watch: {
+        '$route.query.fullname': {
+            immediate: true,
+            handler(newKeyword) {
+                this.keyword = newKeyword || '';
+                this.loadUsers();
+            }
+        }
     }
 }
 </script>
@@ -222,6 +259,30 @@ li.users:hover .user-name {
     background-color: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    margin: 1rem 0;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #4BACB8;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 @media (max-width: 600px) {

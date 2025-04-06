@@ -15,6 +15,9 @@ module.exports = app => {
         .get(UserBuilder.list_all_users)
         .post(UserBuilder.create_a_user);
     app
+        .route('/users/search')
+        .get(UserBuilder.search_users);
+    app
         .route('/users/:userId')
         .get(UserBuilder.read_a_user)
         .put(UserBuilder.update_a_user)

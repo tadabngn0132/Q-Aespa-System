@@ -47,5 +47,9 @@ export const userApi = {
     updateUser: handleError(async (id, payload) => {
         const res = await apiClient.userApiClient.put(`${id}`, payload);
         return res.data;
+    }),
+    searchUsers: handleError(async keyword => {
+        const res = await apiClient.userApiClient.get(`search?keyword=${encodeURIComponent(keyword)}`);
+        return res.data;
     })
 }

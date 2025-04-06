@@ -59,6 +59,11 @@
                         return;
                     }
 
+                    if (this.keyword.trim() === '(' + this.$route.query.fullname + ')') {
+                        console.log('Tag name does not change, skip...');
+                        return;
+                    }
+
                     const trimmedKeyword = this.keyword.trim();
                     console.log(trimmedKeyword);
                     
@@ -91,6 +96,10 @@
             loadSearchInput() {
                 if (this.type === 'exactQuestion') {
                     this.keyword = '"' + this.keyword + '"'
+                } else if (this.type === 'relativeUser') {
+                    this.keyword = '(' + this.keyword + ')'
+                } else if (this.type === 'exactTag') {
+                    this.keyword = '[' + this.keyword + ']'
                 }
             }
         },
@@ -99,7 +108,6 @@
                 immediate: true,
                 handler(newKeyword) {
                     this.keyword = newKeyword;
-                    this.loadSearchInput();
                 }
             },
             resetSearch: {
@@ -114,7 +122,7 @@
                 immediate: true,
                 handler(newtagName) {
                     if (newtagName !== '' && newtagName !== undefined) {
-                        this.keyword = '[' + newtagName + ']';
+                        this.keyword = newtagName;
                     }
                 }
             },
@@ -124,6 +132,14 @@
                     if (newType !== '' && newType !== undefined) {
                         this.type = newType;
                         this.loadSearchInput();
+                    }
+                }
+            },
+            '$route.query.fullname': {
+                immediate: true,
+                handler(newName) {
+                    if (newName !== '' && newName !== undefined) {
+                        this.keyword = newName;
                     }
                 }
             }

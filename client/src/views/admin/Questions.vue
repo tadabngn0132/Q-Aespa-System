@@ -342,6 +342,7 @@
     tbody tr td.question-title-show ul.tags-list {
         list-style-type: none;
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
         gap: 0.75em;
         margin-top: 0.5em;

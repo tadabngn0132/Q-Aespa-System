@@ -179,7 +179,8 @@ import exportApis from '@/helpers/api/exportApis';
                         this.$router.push({
                             name: 'AdminSearchUser',
                             query: { 
-                                keyword: this.keyword
+                                fullname: this.keyword,
+                                type: type
                             }
                         });
                     } else if (type === 'exactTag') {
@@ -189,13 +190,20 @@ import exportApis from '@/helpers/api/exportApis';
                             this.$router.push({
                                 name: 'AdminSearchUnavailableTag',
                                 query: { 
-                                    tagName: this.keyword
+                                    tagName: this.keyword,
+                                    type: type
                                 }
                             });
                         } else {
                             if (this.foundTag._id !== this.currentTagId) {
                                 this.currentTagId = this.foundTag._id;
-                                this.$router.push(`/admin/tags/${this.foundTag._id}`);
+                                this.$router.push({
+                                    path: `/admin/tags/${this.foundTag._id}`,
+                                    query: { 
+                                        tagName: this.keyword,
+                                        type: type
+                                    }
+                                });
                             }
                         }
                     }

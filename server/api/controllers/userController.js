@@ -48,4 +48,14 @@ exports.update_a_user = async (req, res) => {
     } catch (err) {
         res.status(400).send({ message: err.message });
     }
+};
+
+exports.search_users = async (req, res) => {
+    try {
+        const keyword = req.query.keyword;
+        const foundUsers = await userService.searchUser(keyword);
+        res.json(foundUsers);
+    } catch (err) {
+        res.status(400).send({ message: err.message });
+    }
 }
