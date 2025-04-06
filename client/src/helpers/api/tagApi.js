@@ -46,5 +46,9 @@ export const tagApi = {
     getTagsSort: handleError(async (sortType) => {
         const res = await apiClient.tagApiClient.get(`/sort?sort=${encodeURIComponent(sortType)}`);
         return res.data;
+    }),
+    getTagByTagName: handleError(async tagName => {
+        const res = await apiClient.tagApiClient.get(`/search?tagName=${encodeURIComponent(tagName)}`);
+        return res.data;
     })
 };

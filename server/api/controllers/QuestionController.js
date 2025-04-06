@@ -122,4 +122,14 @@ exports.countQuestionByTagId = async (req, res) => {
     } catch (err) {
         res.status(500).send({ message: err.message })
     }
-}
+};
+
+exports.search_questions_by_exact = async (req, res) => {
+    try {
+        const { keyword } = req.query;
+        const questions = await questionService.searchQuestionsByExactKeyword(keyword);
+        res.json(questions);
+    } catch (err) {
+    res.status(500).send({ message: err.message });
+    }
+};

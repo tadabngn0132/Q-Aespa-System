@@ -65,3 +65,12 @@ exports.list_all_tags_by_question_count = async (req, res) => {
         res.status(500).send({ message: err.message });
     }
 };
+
+exports.read_a_tag_by_tag_name = async (req, res) => {
+    try {
+        const tag = await tagService.getTagByTagName(req.query.tagName);
+        res.json(tag);
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
+}

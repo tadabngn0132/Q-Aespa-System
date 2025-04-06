@@ -14,6 +14,9 @@ module.exports = app => {
         .route('/tags')
         .get(tagBuilder.list_all_tags)
         .post(tagBuilder.create_a_tag);
+    app 
+        .route('/tags/search')
+        .get(tagBuilder.read_a_tag_by_tag_name);
     app
         .route('/tags/:tagId')
         .get(tagBuilder.read_a_tag)

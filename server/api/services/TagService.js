@@ -31,7 +31,10 @@ const tagService = {
     createTag: async (TagData) => {
         let existingTag = await Tag.findOne({ name: TagData.name});
         if (!existingTag) {
-            const newTag = new Tag(TagData);
+            const newTag = new Tag({
+                name: TagData.name.toLowerCase(),
+                description: TagData.description
+            });
             return await newTag.save();
         } else {
             throw new Error('Tag already exists.');
@@ -44,6 +47,8 @@ const tagService = {
         if (!existingTag) {
             throw new Error('Tag not found');
         }
+
+        TagData.name = TagData.name.toLowerCase();
 
         const tag = await Tag.findByIdAndUpdate(
             { _id: tagId },
@@ -116,6 +121,10 @@ const tagService = {
         );
 
         return tagsWithQuestionCount.sort((a, b) => b.questionQuantity - a.questionQuantity);
+    },
+
+    getTagByTagName: async (tagName) => {
+        return await Tag.findOne({ name: tagName.toLowerCase() });
     }
 };
 

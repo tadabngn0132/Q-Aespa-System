@@ -209,12 +209,14 @@
     .question-quantity {
         display: flex;
         align-items: center;
+        color: inherit;
     }
 
     .created-time {
         display: flex;
         align-items: center;
         font-style: italic;
+        color: inherit;
     }
 
     @keyframes fadeIn {

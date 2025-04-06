@@ -46,7 +46,7 @@ const routes = [
             },
             {
                 path: '/admin/search',
-                name: 'AdminSearch',
+                name: 'AdminSearchQuestion',
                 component: () => import('@/views/admin/Questions.vue')
             }, 
             {
@@ -70,6 +70,11 @@ const routes = [
                 component: () => import('@/views/admin/Users.vue')
             },
             {
+                path: '/admin/search',
+                name: 'AdminSearchUser',
+                component: () => import('@/views/admin/Users.vue')
+            },
+            {
                 path: '/admin/users/:id',
                 name: 'AdminUserDetail',
                 component: () => import('@/views/admin/UserDetail.vue')
@@ -88,6 +93,11 @@ const routes = [
                 path: '/admin/tags',
                 name: 'AdminTags',
                 component: () => import('@/views/admin/Tags.vue')
+            },
+            {
+                path: '/admin/search',
+                name: 'AdminSearchUnavailableTag',
+                component: () => import('@/components/UnavailableTag.vue')
             },
             {
                 path: '/admin/tags/:id',

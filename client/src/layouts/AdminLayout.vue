@@ -108,6 +108,7 @@
 
 <script>
     import SearchBar from '@/components/SearchBar.vue';
+import exportApis from '@/helpers/api/exportApis';
     import { mapGetters } from 'vuex';
     
     export default {
@@ -121,7 +122,9 @@
                 altLogo: 'Logo',
                 isNavVisible: false,
                 keyword: '',
-                isSearching: false
+                isSearching: false,
+                foundTag: null,
+                currentTagId: ''
             }
         },
         computed: {
@@ -156,7 +159,7 @@
             logout() {
                 this.$store.dispatch('auth/logout');
             },
-            getKeyword: function(keyword) {
+            getKeyword: async function(keyword, type) {
                 if (keyword === '') {
                     this.keyword = '';
                     this.isSearching = false;
@@ -164,10 +167,38 @@
                     this.keyword = keyword;
                     this.isSearching = true;
 
-                    this.$router.push({
-                        name: 'AdminSearch',
-                        query: { keyword: this.keyword }
-                    });
+                    if (type === 'relativeQuestion' || type === 'exactQuestion') {
+                        this.$router.push({
+                            name: 'AdminSearchQuestion',
+                            query: { 
+                                keyword: this.keyword,
+                                type: type
+                            }
+                        });
+                    } else if (type === 'relativeUser') {
+                        this.$router.push({
+                            name: 'AdminSearchUser',
+                            query: { 
+                                keyword: this.keyword
+                            }
+                        });
+                    } else if (type === 'exactTag') {
+                        this.foundTag = null;
+                        this.foundTag = await exportApis.tags.getTagByTagName(keyword);
+                        if (this.foundTag === null) {
+                            this.$router.push({
+                                name: 'AdminSearchUnavailableTag',
+                                query: { 
+                                    tagName: this.keyword
+                                }
+                            });
+                        } else {
+                            if (this.foundTag._id !== this.currentTagId) {
+                                this.currentTagId = this.foundTag._id;
+                                this.$router.push(`/admin/tags/${this.foundTag._id}`);
+                            }
+                        }
+                    }
                 }
             }
         },

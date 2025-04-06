@@ -8,10 +8,10 @@ module.exports = app => {
     app
         .route('/questions/search')
         .get((req, res) => {
-            if (!req.query.sort) {
+            if (!req.query.type) {
                 questionBuilder.search_questions(req, res);
-            } else if (req.query.sort === 'asc') {
-                questionBuilder.search_questions_asc(req, res);
+            } else if (req.query.type === 'exactQuestion') {
+                questionBuilder.search_questions_by_exact(req, res);
             }
         })
     app

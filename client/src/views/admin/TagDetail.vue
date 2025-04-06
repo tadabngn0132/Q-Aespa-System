@@ -7,7 +7,7 @@
 
         <div v-else>
             <div class="tag-name-create-btn">
-                <h1 class="tag-name">#{{ tag.name }}</h1>
+                <h1 class="tag-name">[{{ tag.name }}]</h1>
                 <router-link 
                 to="CreateTag"
                 class="create-btn">

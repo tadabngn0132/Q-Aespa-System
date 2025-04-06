@@ -42,7 +42,8 @@
         data() {
             return {
                 keyword: '',
-                tagname: ''
+                tagname: '',
+                type: ''
             };
         },
         methods: {
@@ -52,13 +53,45 @@
                         console.log('Keyword does not change, skip...');
                         return;
                     }
-                    this.$emit('getKeyword', this.keyword.trim());
+
+                    if (this.keyword.trim() === '[' + this.$route.query.tagName + ']') {
+                        console.log('Tag name does not change, skip...');
+                        return;
+                    }
+
+                    const trimmedKeyword = this.keyword.trim();
+                    console.log(trimmedKeyword);
+                    
+                    this.type = ''
+
+                    if (trimmedKeyword.match(/^\[.*\]$/)) {
+                        let tagName = trimmedKeyword.slice(trimmedKeyword.indexOf('[')+1, trimmedKeyword.lastIndexOf(']'));
+                        this.type = 'exactTag'
+                        this.$emit('getKeyword', tagName.trim(), this.type);
+                    } else if (trimmedKeyword.match(/^\(.*\)$/)) {
+                        let fullName = trimmedKeyword.slice(trimmedKeyword.indexOf('(')+1, trimmedKeyword.lastIndexOf(')'));
+                        this.type = 'relativeUser'
+                        this.$emit('getKeyword', fullName.trim(), this.type);
+                    } else if (trimmedKeyword.match(/^".*"$/)) {
+                        let exactPhrase = trimmedKeyword.slice(trimmedKeyword.indexOf('"')+1, trimmedKeyword.lastIndexOf('"'));
+                        this.type = 'exactQuestion'
+                        this.$emit('getKeyword', exactPhrase.trim(), this.type);
+                    } else {
+                        this.type = 'relativeQuestion'
+                        this.$emit('getKeyword', trimmedKeyword, this.type);
+                    }
+
                 }
             },
             handleInputChange() {
                 setTimeout(() => {
                     this.$emit('filterTag', this.tagname.trim());
                 }, 750);
+            },
+            loadSearchInput() {
+                if (this.type === 'exactQuestion') {
+                    this.keyword = '"' + this.keyword + '"'
+                }
             }
         },
         watch: {
@@ -66,6 +99,7 @@
                 immediate: true,
                 handler(newKeyword) {
                     this.keyword = newKeyword;
+                    this.loadSearchInput();
                 }
             },
             resetSearch: {
@@ -73,6 +107,23 @@
                 handler(newVal) {
                     if (newVal === true) {
                         this.tagname = '';
+                    }
+                }
+            },
+            '$route.query.tagName': {
+                immediate: true,
+                handler(newtagName) {
+                    if (newtagName !== '' && newtagName !== undefined) {
+                        this.keyword = '[' + newtagName + ']';
+                    }
+                }
+            },
+            '$route.query.type': {
+                immediate: true,
+                handler(newType) {
+                    if (newType !== '' && newType !== undefined) {
+                        this.type = newType;
+                        this.loadSearchInput();
                     }
                 }
             }

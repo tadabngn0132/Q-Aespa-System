@@ -168,7 +168,24 @@ const questionService = {
         const questionQuantity = await Question.countDocuments({ tags: tagId });
         
         return questionQuantity;
-    }
+    },
+
+    searchQuestionsByExactKeyword: async (keyword) => {
+        try {
+            let foundQuestions = await Question.find({
+                $text: {
+                    $search: `"${keyword}"`
+                }
+            })
+            .populate('tags', 'name _id')
+            .populate('userId', 'name email')
+            .sort({ createdAt: -1 });
+            
+            return foundQuestions;
+        } catch (error) {
+            throw error;
+        }
+    },
 };
 
 module.exports = questionService;

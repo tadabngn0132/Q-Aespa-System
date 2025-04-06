@@ -145,7 +145,8 @@
                 isLoading: true,
                 keyword: '',
                 isSearching: false,
-                sortType: ''
+                sortType: '',
+                searchType: ''
             };
         },
         methods: {
@@ -186,9 +187,12 @@
                         if (this.keyword === '' || this.keyword === undefined) {
                             this.isSearching = false;
                             this.questions = await exportApis.questions.getQuestions();
-                        } else {
+                        } else if (this.searchType === 'relativeQuestion') {
                             this.isSearching = true;
                             this.questions = await exportApis.questions.searchQuestion(this.keyword);
+                        } else if (this.searchType === 'exactQuestion') {
+                            this.isSearching = true;
+                            this.questions = await exportApis.questions.searchQuestionExact(this.keyword, this.searchType);
                         }
                         this.questionCount = this.questions.length;
                         this.isLoading = false;
@@ -228,10 +232,19 @@
                     this.keyword = newKeyword || '';
                     this.loadQuestions();
                 }
+            },
+
+            '$route.query.type': {
+                immediate: true,
+                handler(newType) {
+                    this.searchType = newType || '';
+                    this.loadQuestions();
+                }
             }
         },
         mounted() {
             this.keyword = this.$route.query.keyword;
+            this.searchType = this.$route.query.type;
             
             // this.loadQuestions();
         }

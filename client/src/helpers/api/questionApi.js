@@ -58,5 +58,9 @@ export const questionApi = {
     countQuestionByTagId: handleError(async tagId => {
         const res = await apiClient.questionApiClient.get(`/questionCount/${tagId}`);
         return res.data;
+    }),
+    searchQuestionExact: handleError(async (keyword, type) => {
+        const res = await apiClient.questionApiClient.get(`search?keyword=${encodeURIComponent(keyword)}&type=${encodeURIComponent(type)}`);
+        return res.data;
     })
 };

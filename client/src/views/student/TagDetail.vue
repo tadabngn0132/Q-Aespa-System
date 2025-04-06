@@ -6,7 +6,7 @@
         </div>
 
         <div v-else>
-            <h1 class="tag-name">#{{ tag.name }}</h1>
+            <h1 class="tag-name">[{{ tag.name }}]</h1>
             <p class="tag-description">{{ tag.description }}</p>
 
             <span v-if="questionCount > 1" class="question-count">
