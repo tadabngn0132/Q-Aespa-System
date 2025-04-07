@@ -214,6 +214,8 @@ const actions = {
 
         if (!router.currentRoute.path.startsWith('/student')) {
             router.push('/student');
+        } else {
+            window.location.reload();
         }
     },
 

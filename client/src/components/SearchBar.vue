@@ -14,21 +14,34 @@
         <input 
         v-if="!forTag"
         type="text" 
-        v-model="keyword" 
+        v-model="displayKeyword" 
         placeholder="Search..." 
         @keyup.enter="validateAndSearch"
+        @focus="isFocus = true"
+        @blur="isFocus = false"
         class="search-input"
+        id="search-bar-all"
         />
 
         <button v-if="!forTag" @click="validateAndSearch" class="search-btn">
             <i class="fa-solid fa-magnifying-glass"></i>
         </button>
+
+        <div v-if="!forTag && isFocus" class="popover"></div>
+        <div v-if="!forTag && isFocus" class="search-helper-container">
+            <search-helper></search-helper>
+        </div>
     </div>
 </template>
 
 <script>
+    import SearchHelper from './SearchHelper.vue';
+
     export default {
         name: 'SearchBar',
+        components: {
+            'search-helper': SearchHelper
+        },
         props: {
             forTag: {
                 type: Boolean,
@@ -43,49 +56,63 @@
             return {
                 keyword: '',
                 tagname: '',
-                type: ''
+                type: '',
+                displayKeyword: '',
+                lastSearched: { keyword: '', type: '' },
+                isFocus: false
             };
         },
         methods: {
-            validateAndSearch() {                
-                if (this.keyword.trim()) {
-                    if (this.keyword.trim() === this.$route.query.keyword) {
-                        console.log('Keyword does not change, skip...');
-                        return;
-                    }
+            validateAndSearch() {
+                this.isFocus = false;
 
-                    if (this.keyword.trim() === '[' + this.$route.query.tagName + ']') {
-                        console.log('Tag name does not change, skip...');
-                        return;
-                    }
-
-                    if (this.keyword.trim() === '(' + this.$route.query.fullname + ')') {
-                        console.log('Tag name does not change, skip...');
-                        return;
-                    }
-
-                    const trimmedKeyword = this.keyword.trim();
-                    console.log(trimmedKeyword);
+                if (this.displayKeyword.trim()) {
+                    const trimmedKeyword = this.displayKeyword.trim();
+                    console.log("Search attempt with:", trimmedKeyword);
                     
-                    this.type = ''
+                    let extractedKeyword = '';
+                    let searchType = '';
 
                     if (trimmedKeyword.match(/^\[.*\]$/)) {
-                        let tagName = trimmedKeyword.slice(trimmedKeyword.indexOf('[')+1, trimmedKeyword.lastIndexOf(']'));
-                        this.type = 'exactTag'
-                        this.$emit('getKeyword', tagName.trim(), this.type);
+                        extractedKeyword = trimmedKeyword.slice(trimmedKeyword.indexOf('[')+1, trimmedKeyword.lastIndexOf(']')).trim();
+                        searchType = 'exactTag';
                     } else if (trimmedKeyword.match(/^\(.*\)$/)) {
-                        let fullName = trimmedKeyword.slice(trimmedKeyword.indexOf('(')+1, trimmedKeyword.lastIndexOf(')'));
-                        this.type = 'relativeUser'
-                        this.$emit('getKeyword', fullName.trim(), this.type);
+                        extractedKeyword = trimmedKeyword.slice(trimmedKeyword.indexOf('(')+1, trimmedKeyword.lastIndexOf(')')).trim();
+                        searchType = 'relativeUser';
                     } else if (trimmedKeyword.match(/^".*"$/)) {
-                        let exactPhrase = trimmedKeyword.slice(trimmedKeyword.indexOf('"')+1, trimmedKeyword.lastIndexOf('"'));
-                        this.type = 'exactQuestion'
-                        this.$emit('getKeyword', exactPhrase.trim(), this.type);
+                        extractedKeyword = trimmedKeyword.slice(trimmedKeyword.indexOf('"')+1, trimmedKeyword.lastIndexOf('"')).trim();
+                        searchType = 'exactQuestion';
                     } else {
-                        this.type = 'relativeQuestion'
-                        this.$emit('getKeyword', trimmedKeyword, this.type);
+                        extractedKeyword = trimmedKeyword;
+                        searchType = 'relativeQuestion';
                     }
 
+                    console.log("Extracted keyword:", extractedKeyword, "Type:", searchType);
+                    
+                    const isSameSearch = (
+                        this.lastSearched.keyword === extractedKeyword && 
+                        this.lastSearched.type === searchType &&
+                        this.$route.query.keyword === extractedKeyword &&
+                        this.$route.query.type === searchType
+                    );
+                    
+                    if (isSameSearch) {
+                        console.log('Same search detected, forcing refresh');
+                        this.$emit('getKeyword', '', '');
+                        setTimeout(() => {
+                            this.$emit('getKeyword', extractedKeyword, searchType);
+                        }, 50);
+                    } else {
+                        this.$emit('getKeyword', extractedKeyword, searchType);
+                    }
+                    
+                    this.lastSearched = {
+                        keyword: extractedKeyword,
+                        type: searchType
+                    };
+                    
+                    this.keyword = extractedKeyword;
+                    this.type = searchType;
                 }
             },
             handleInputChange() {
@@ -93,53 +120,74 @@
                     this.$emit('filterTag', this.tagname.trim());
                 }, 750);
             },
-            loadSearchInput() {
-                if (this.type === 'exactQuestion') {
-                    this.keyword = '"' + this.keyword + '"'
-                } else if (this.type === 'relativeUser') {
-                    this.keyword = '(' + this.keyword + ')'
-                } else if (this.type === 'exactTag') {
-                    this.keyword = '[' + this.keyword + ']'
+            formatKeywordForDisplay(keyword, type) {
+                if (!keyword) return '';
+                
+                switch(type) {
+                    case 'exactQuestion':
+                        return `"${keyword}"`;
+                    case 'relativeUser':
+                        return `(${keyword})`;
+                    case 'exactTag':
+                        return `[${keyword}]`;
+                    default:
+                        return keyword;
                 }
+            },
+            resetSearchState() {
+                this.displayKeyword = '';
+                this.keyword = '';
+                this.type = '';
+                this.lastSearched = { keyword: '', type: '' };
+            }
+        },
+        created() {
+            const urlKeyword = this.$route.query.keyword || this.$route.query.tagName || this.$route.query.fullname || '';
+            const urlType = this.$route.query.type;
+            
+            if (urlKeyword) {
+                this.displayKeyword = this.formatKeywordForDisplay(urlKeyword, urlType);
+                this.keyword = urlKeyword;
+                this.type = urlType;
+                this.lastSearched = {
+                    keyword: urlKeyword,
+                    type: urlType
+                };
             }
         },
         watch: {
-            '$route.query.keyword': {
-                immediate: true,
-                handler(newKeyword) {
-                    this.keyword = newKeyword;
-                }
+            '$route': {
+                handler(newRoute) {
+                    console.log("Route changed:", newRoute.path);
+                    
+                    if (!newRoute.query.keyword && !newRoute.query.tagName && !newRoute.query.fullname) {
+                        console.log("Resetting search state");
+                        this.resetSearchState();
+                        return;
+                    }
+                    
+                    const keyword = newRoute.query.keyword || newRoute.query.tagName || newRoute.query.fullname || '';
+                    const type = newRoute.query.type;
+                    
+                    if (keyword) {
+                        console.log("Updating display keyword:", keyword, type);
+                        this.displayKeyword = this.formatKeywordForDisplay(keyword, type);
+                        this.keyword = keyword;
+                        this.type = type;
+                        this.lastSearched = {
+                            keyword: keyword,
+                            type: type
+                        };
+                    }
+                },
+                deep: true,
+                immediate: true
             },
             resetSearch: {
                 immediate: true,
                 handler(newVal) {
                     if (newVal === true) {
                         this.tagname = '';
-                    }
-                }
-            },
-            '$route.query.tagName': {
-                immediate: true,
-                handler(newtagName) {
-                    if (newtagName !== '' && newtagName !== undefined) {
-                        this.keyword = newtagName;
-                    }
-                }
-            },
-            '$route.query.type': {
-                immediate: true,
-                handler(newType) {
-                    if (newType !== '' && newType !== undefined) {
-                        this.type = newType;
-                        this.loadSearchInput();
-                    }
-                }
-            },
-            '$route.query.fullname': {
-                immediate: true,
-                handler(newName) {
-                    if (newName !== '' && newName !== undefined) {
-                        this.keyword = newName;
                     }
                 }
             }
@@ -149,6 +197,7 @@
 
 <style scoped>
     .search-bar {
+        position: relative;
         margin: 0;
         padding: 0;
         box-sizing: border-box;
@@ -168,6 +217,26 @@
 
     .icon-search-tag-bar i {
         color: inherit;
+    }
+
+    .popover {
+        position: absolute;
+        top: calc(100% + 2px);
+        left: 6em;
+        z-index: 1000;
+        width: 0;
+        height: 0;
+        border-left: 0.45em solid transparent;
+        border-right: 0.45em solid transparent;
+        border-bottom: 0.5em solid #fff;
+    }
+
+    .search-helper-container {
+        position: absolute;
+        top: calc(100% + 9px);
+        left: 0;
+        z-index: 1001;
+        width: fit-content;
     }
     
     .search-input {
@@ -216,4 +285,9 @@
         transform: scale(0.975);
     }
 
+    @media screen and (max-width: 450px) {
+        .search-input {
+            width: 12em;
+        }
+    }
 </style>

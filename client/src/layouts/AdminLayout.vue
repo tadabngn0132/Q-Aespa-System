@@ -160,52 +160,73 @@ import exportApis from '@/helpers/api/exportApis';
                 this.$store.dispatch('auth/logout');
             },
             getKeyword: async function(keyword, type) {
+                console.log("getKeyword called with:", keyword, type);
+                
                 if (keyword === '') {
                     this.keyword = '';
                     this.isSearching = false;
-                } else {
-                    this.keyword = keyword;
-                    this.isSearching = true;
+                    this.foundTag = null;
+                    this.currentTagId = '';
+                    
+                    // Clear the URL parameters when clearing search
+                    this.$router.replace({
+                        query: {}
+                    });
+                    return;
+                }
+                
+                this.keyword = keyword;
+                this.isSearching = true;
 
-                    if (type === 'relativeQuestion' || type === 'exactQuestion') {
-                        this.$router.push({
-                            name: 'AdminSearchQuestion',
-                            query: { 
-                                keyword: this.keyword,
-                                type: type
-                            }
-                        });
-                    } else if (type === 'relativeUser') {
-                        this.$router.push({
-                            name: 'AdminSearchUser',
-                            query: { 
-                                fullname: this.keyword,
-                                type: type
-                            }
-                        });
-                    } else if (type === 'exactTag') {
-                        this.foundTag = null;
-                        this.foundTag = await exportApis.tags.getTagByTagName(keyword);
-                        if (this.foundTag === null) {
+                if (type === 'relativeQuestion' || type === 'exactQuestion') {
+                    console.log("Searching for question:", keyword, type);
+                    this.$router.push({
+                        name: 'AdminSearchQuestion',
+                        query: { 
+                            keyword: this.keyword,
+                            type: type
+                        }
+                    });
+                } else if (type === 'relativeUser') {
+                    console.log("Searching for user:", keyword);
+                    this.$router.push({
+                        name: 'AdminSearchUser',
+                        query: { 
+                            keyword: this.keyword,
+                            type: type
+                        }
+                    });
+                } else if (type === 'exactTag') {
+                    console.log("Searching for tag:", keyword);
+                    try {
+                        const tagResponse = await exportApis.tags.getTagByTagName(keyword);
+                        console.log("Tag search response:", tagResponse);
+                        
+                        if (!tagResponse || !tagResponse._id) {
+                            console.log("Tag not found, showing unavailable tag page");
                             this.$router.push({
                                 name: 'AdminSearchUnavailableTag',
                                 query: { 
-                                    tagName: this.keyword,
+                                    keyword: this.keyword,
                                     type: type
                                 }
                             });
                         } else {
-                            if (this.foundTag._id !== this.currentTagId) {
-                                this.currentTagId = this.foundTag._id;
-                                this.$router.push({
-                                    path: `/admin/tags/${this.foundTag._id}`,
-                                    query: { 
-                                        tagName: this.keyword,
-                                        type: type
-                                    }
-                                });
-                            }
+                            console.log("Tag found, navigating to tag page");
+                            this.foundTag = tagResponse;
+                            this.currentTagId = tagResponse._id;
+                            
+                            this.$router.push({
+                                path: `/admin/tags/${tagResponse._id}`,
+                                query: { 
+                                    keyword: this.keyword,
+                                    type: type
+                                }
+                            });
                         }
+                    } catch (error) {
+                        console.error("Error searching for tag:", error);
+                        this.$showMessage.error("Error searching for tag: " + error.message);
                     }
                 }
             }
@@ -516,6 +537,10 @@ import exportApis from '@/helpers/api/exportApis';
 
         .auth--nav-icon {
             gap: 0;
+        }
+
+        .authen-logout p {
+            display: none;
         }
 
         .authen-logout button {

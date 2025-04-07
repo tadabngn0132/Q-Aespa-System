@@ -113,8 +113,12 @@ const questionService = {
 
     searchQuestionsByKeyword: async (keyword) => {
         try {
-            let foundQuestions = await Question.find(
-                {"title": {"$regex": keyword, "$options": "i"}}
+            let foundQuestions = await Question.find({
+                $or: [
+                    {"title": {"$regex": keyword, "$options": "i"}},
+                    {"description": {"$regex": keyword, "$options": "i"}}
+                ]
+            }
             )
             .populate('tags', 'name _id')
             .populate('userId', 'name email')

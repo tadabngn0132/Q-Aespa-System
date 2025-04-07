@@ -138,7 +138,7 @@ const routes = [
             },
             {
                 path: '/student/search',
-                name: 'StudentSearch',
+                name: 'StudentSearchQuestion',
                 component: () => import('@/views/student/Questions.vue')
             }, 
             {
@@ -163,6 +163,11 @@ const routes = [
                 path: '/student/tags',
                 name: 'StudentTags',
                 component: () => import('@/views/student/Tags.vue')
+            },
+            {
+                path: '/student/search',
+                name: 'StudentSearchUnavailableTag',
+                component: () => import('@/components/UnavailableTag.vue')
             },
             {
                 path: '/student/tags/:id',

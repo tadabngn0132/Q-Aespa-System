@@ -29,6 +29,8 @@
             @sortChanged="sortChanged"
             :forTag="false"></sort-bar>
         </div>
+
+        <p v-if="isSearching === true" class="results-for">Results for {{ keyword }}</p>
         
         <div v-if="isLoading" class="loading-container">
             <div class="loading-spinner"></div>
@@ -117,7 +119,9 @@
                 questionCount: 0,
                 isLoading: true,
                 keyword: '',
-                sortType: ''
+                isSearching: false,
+                sortType: '',
+                searchType: ''
             };
         },
         methods: {
@@ -137,9 +141,12 @@
                         if (this.keyword === '' || this.keyword === undefined) {
                             this.isSearching = false;
                             this.questions = await exportApis.questions.getQuestions();
-                        } else {
+                        } else if (this.searchType === 'relativeQuestion') {
                             this.isSearching = true;
                             this.questions = await exportApis.questions.searchQuestion(this.keyword);
+                        } else if (this.searchType === 'exactQuestion') {
+                            this.isSearching = true;
+                            this.questions = await exportApis.questions.searchQuestionExact(this.keyword, this.searchType);
                         }
                         this.questionCount = this.questions.length;
                         this.isLoading = false;
@@ -179,10 +186,19 @@
                     this.keyword = newKeyword || '';
                     this.loadQuestions();
                 }
+            },
+
+            '$route.query.type': {
+                immediate: true,
+                handler(newType) {
+                    this.searchType = newType || '';
+                    this.loadQuestions();
+                }
             }
         },
         mounted() {
             this.keyword = this.$route.query.keyword;
+            this.searchType = this.$route.query.type;
             
             // this.loadQuestions();
         }
@@ -210,6 +226,7 @@
     justify-self: left;
     font-size: 13.5px;
     margin-bottom: 0.25em;
+    margin-top: 0.75em;
     color: #626262;
 }
 

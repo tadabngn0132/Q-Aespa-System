@@ -100,12 +100,12 @@ export default {
         }
     },
     async mounted() {
-        this.keyword = this.$route.query.fullname;
+        this.keyword = this.$route.query.keyword;
     
         this.loadUsers();
     },
     watch: {
-        '$route.query.fullname': {
+        '$route.query.keyword': {
             immediate: true,
             handler(newKeyword) {
                 this.keyword = newKeyword || '';

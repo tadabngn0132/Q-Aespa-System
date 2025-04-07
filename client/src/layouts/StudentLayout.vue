@@ -108,6 +108,7 @@
 <script>
     import SearchBar from '@/components/SearchBar.vue';
     import { mapGetters } from 'vuex';
+    import exportApis from '@/helpers/api/exportApis';
 
     export default {
         name: 'StudentLayout',
@@ -120,7 +121,9 @@
                 altLogo: 'Logo',
                 isNavVisible: false,
                 keyword: '',
-                isSearching: false
+                isSearching: false,
+                foundTag: null,
+                currentTagId: ''
             }
         },
         computed: {
@@ -155,18 +158,66 @@
             logout() {
                 this.$store.dispatch('auth/logout');
             },
-            getKeyword: function(keyword) {
+            getKeyword: async function(keyword, type) {
+                console.log("getKeyword called with:", keyword, type);
+                
                 if (keyword === '') {
                     this.keyword = '';
                     this.isSearching = false;
-                } else {
-                    this.keyword = keyword;
-                    this.isSearching = true;
-
-                    this.$router.push({
-                        name: 'StudentSearch',
-                        query: { keyword: this.keyword }
+                    this.foundTag = null;
+                    this.currentTagId = '';
+                    
+                    // Clear the URL parameters when clearing search
+                    this.$router.replace({
+                        query: {}
                     });
+                    return;
+                }
+                
+                this.keyword = keyword;
+                this.isSearching = true;
+
+                if (type === 'relativeQuestion' || type === 'exactQuestion') {
+                    console.log("Searching for question:", keyword, type);
+                    this.$router.push({
+                        name: 'StudentSearchQuestion',
+                        query: { 
+                            keyword: this.keyword,
+                            type: type
+                        }
+                    });
+                } else if (type === 'exactTag') {
+                    console.log("Searching for tag:", keyword);
+                    try {
+                        const tagResponse = await exportApis.tags.getTagByTagName(keyword);
+                        console.log("Tag search response:", tagResponse);
+                        
+                        if (!tagResponse || !tagResponse._id) {
+                            console.log("Tag not found, showing unavailable tag page");
+                            this.$router.push({
+                                name: 'StudentSearchUnavailableTag',
+                                query: { 
+                                    keyword: this.keyword,
+                                    type: type
+                                }
+                            });
+                        } else {
+                            console.log("Tag found, navigating to tag page");
+                            this.foundTag = tagResponse;
+                            this.currentTagId = tagResponse._id;
+                            
+                            this.$router.push({
+                                path: `/student/tags/${tagResponse._id}`,
+                                query: { 
+                                    keyword: this.keyword,
+                                    type: type
+                                }
+                            });
+                        }
+                    } catch (error) {
+                        console.error("Error searching for tag:", error);
+                        this.$showMessage.error("Error searching for tag: " + error.message);
+                    }
                 }
             }
         },
@@ -475,6 +526,10 @@
 
         .auth--nav-icon {
             gap: 0;
+        }
+
+        .authen-logout p {
+            display: none;
         }
 
         .authen-logout button {
