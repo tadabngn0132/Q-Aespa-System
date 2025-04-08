@@ -7,7 +7,7 @@
         </span>
 
         <div class="guide">
-            <span>There are no tags with the name {{ tagName }}.</span>
+            <span>There are no tags with the name <code>{{ tagName }}</code>.</span>
             <router-link v-if="isAdmin" :to="{ path: '/admin/tags' }" class="to-tags">
                 View available tags for this site.
             </router-link>
@@ -32,10 +32,10 @@
             ...mapGetters('auth', ['isAdmin'])
         },
         async mounted() {
-            this.tagName = this.$route.query.tagName
+            this.tagName = this.$route.query.keyword
         },
         watch: {
-            '$route.query.tagName': {
+            '$route.query.keyword': {
                 immediate: true,
                 handler(newtagName) {
                     this.tagName = newtagName;
@@ -73,6 +73,13 @@
 
 .to-tags {
     color: #3498db;
+}
+
+code {
+    font-size: 13.5px;
+    padding: 0.2em 0.25em;
+    background-color: #e0e0e0;
+    border-radius: 5px;
 }
 
 @media (max-width: 768px) {

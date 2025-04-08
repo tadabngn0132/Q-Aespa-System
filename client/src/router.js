@@ -95,7 +95,7 @@ const routes = [
                 component: () => import('@/views/admin/Tags.vue')
             },
             {
-                path: '/admin/search',
+                path: '/admin/searchtag',
                 name: 'AdminSearchUnavailableTag',
                 component: () => import('@/components/UnavailableTag.vue')
             },
@@ -165,7 +165,7 @@ const routes = [
                 component: () => import('@/views/student/Tags.vue')
             },
             {
-                path: '/student/search',
+                path: '/student/searchtag',
                 name: 'StudentSearchUnavailableTag',
                 component: () => import('@/components/UnavailableTag.vue')
             },
