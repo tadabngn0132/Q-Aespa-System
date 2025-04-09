@@ -41,17 +41,6 @@ Vue.prototype.$showMessage = {
 
 Vue.config.productionTip = false;
 
-Vue.prototype.$flashMessage = {
-  show(message, type = 'success') {
-    Vue.prototype.$flash.show({
-      text: message,
-      time: 3000,
-      persistOnHover: true,
-      type: type
-    });
-  }
-};
-
 const link = document.createElement('link');
 link.rel = 'stylesheet';
 link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css';
