@@ -22,7 +22,7 @@ const createHeaders = () => {
 const createApiClient = (path) => {
     const client = axios.create({
         baseURL: baseURL + (path || ''),
-        timeout: 10000,
+        timeout: 30000,
         headers: createHeaders()
     });
 

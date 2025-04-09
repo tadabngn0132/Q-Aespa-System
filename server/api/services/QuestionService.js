@@ -11,10 +11,24 @@ const voteService = require('./VoteService');
 
 const questionService = {
     getAllQuestions: async () => {
-        return await Question.find({})
+        const questions = await Question.find({})
             .populate('tags', 'name _id')
             .populate('userId', 'name email')
             .sort({ createdAt: -1 });
+
+        const questionsWithScores = await Promise.all(
+            questions.map(async (question) => {
+                const score = await voteService.countVotes(question._id);
+                const answerCount = await answerService.countAnswerByQuestionId(question._id);
+                return {
+                    ...question.toObject(),
+                    score,
+                    answerCount
+                };
+            })
+        );
+        
+        return questionsWithScores;
     },
 
     getQuestionById: async (questionId) => {
@@ -124,30 +138,63 @@ const questionService = {
             .populate('userId', 'name email')
             .sort({ createdAt: -1 });
             
-            return foundQuestions;
+            const questionsWithScores = await Promise.all(
+                foundQuestions.map(async (question) => {
+                    const score = await voteService.countVotes(question._id);
+                    const answerCount = await answerService.countAnswerByQuestionId(question._id);
+                    return {
+                        ...question.toObject(),
+                        score,
+                        answerCount
+                    };
+                })
+            );
+            
+            return questionsWithScores;
         } catch (error) {
             throw error;
         }
     },
 
     getAllQuestionsAsc: async () => {
-        return await Question.find({})
+        const questions = await Question.find({})
             .populate('tags', 'name _id')
             .populate('userId', 'name email')
             .sort({ createdAt: 1 });
+
+        const questionsWithScores = await Promise.all(
+            questions.map(async (question) => {
+                const score = await voteService.countVotes(question._id);
+                const answerCount = await answerService.countAnswerByQuestionId(question._id);
+                return {
+                    ...question.toObject(),
+                    score,
+                    answerCount
+                };
+            })
+        );
+        
+        return questionsWithScores;
     },
 
     getAllQuestionsUnanswered: async () => {
-        const questions = await questionService.getAllQuestions();
+        const questions = await Question.find({})
+            .populate('tags', 'name _id')
+            .populate('userId', 'name email');
         
-        let unansweredQuestions = [];
-        for (const question of questions) {
-            const answerQuantity = await answerService.countAnswerByQuestionId(question._id);
-            if (answerQuantity === 0) {
-                unansweredQuestions.push(question);
-            }
-        }
-        return unansweredQuestions;
+        const questionsWithScores = await Promise.all(
+            questions.map(async (question) => {
+                const score = await voteService.countVotes(question._id);
+                const answerCount = await answerService.countAnswerByQuestionId(question._id);
+                return {
+                    ...question.toObject(),
+                    score,
+                    answerCount
+                };
+            })
+        );
+        
+        return questionsWithScores.filter(question => question.answerCount === 0);
     },
 
     getAllQuestionsByScore: async () => {
@@ -158,9 +205,11 @@ const questionService = {
         const questionsWithScores = await Promise.all(
             questions.map(async (question) => {
                 const score = await voteService.countVotes(question._id);
+                const answerCount = await answerService.countAnswerByQuestionId(question._id);
                 return {
                     ...question.toObject(),
-                    score
+                    score,
+                    answerCount
                 };
             })
         );
@@ -185,7 +234,19 @@ const questionService = {
             .populate('userId', 'name email')
             .sort({ createdAt: -1 });
             
-            return foundQuestions;
+            const questionsWithScores = await Promise.all(
+                foundQuestions.map(async (question) => {
+                    const score = await voteService.countVotes(question._id);
+                    const answerCount = await answerService.countAnswerByQuestionId(question._id);
+                    return {
+                        ...question.toObject(),
+                        score,
+                        answerCount
+                    };
+                })
+            );
+            
+            return questionsWithScores;
         } catch (error) {
             throw error;
         }

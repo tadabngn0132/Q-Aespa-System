@@ -90,14 +90,30 @@
                         <router-link class="to-question-detail" :to="{name: 'AdminQuestionDetail', params: { id: question._id }}">
                             {{ question.title }}
                         </router-link>
-                        <p>{{ getTruncatedDescription(question.description) }}</p>
-                        <ul class="tags-list" v-if="question.tags && question.tags.length > 0">
-                            <li class="tags" v-for="(tag, j) in question.tags" :key="j">
-                                <router-link class="tag" :to="{name: 'tagDetail', params: { id: tag._id }}">
-                                    {{ tag.name }}
-                                </router-link>
-                            </li>
-                        </ul>
+                        <p class="description">{{ getTruncatedDescription(question.description) }}</p>
+                        <div class="tags-stat">
+                            <ul class="tags-list" v-if="question.tags && question.tags.length > 0">
+                                <li class="tags" v-for="(tag, j) in question.tags" :key="j">
+                                    <router-link class="tag" :to="{name: 'tagDetail', params: { id: tag._id }}">
+                                        {{ tag.name }}
+                                    </router-link>
+                                </li>
+                            </ul>
+                            <div class="stat">
+                                <span v-if="question.score <= 1" class="vote-score">
+                                    {{ question.score }} score
+                                </span>
+                                <span v-if="question.score > 1" class="vote-score">
+                                    {{ question.score }} scores
+                                </span>
+                                <span v-if="question.answerCount <= 1" class="answer-quantity">
+                                    {{ question.answerCount }} answer
+                                </span>
+                                <span v-if="question.answerCount > 1" class="answer-quantity">
+                                    {{ question.answerCount }} answers
+                                </span>
+                            </div>
+                        </div>
                     </td>
                     <td class="ud-btn-container">
                         <router-link class="ud-btn edit-btn" :to="{name: 'editQuestion', params: { id: question._id }}">
@@ -264,9 +280,38 @@
         margin-bottom: 1.25em;
     }
 
+    .tags-stat {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .stat {
+        display: flex;
+        align-items: center;
+        gap: 0.75em;
+        margin-bottom: 4px;
+        font-size: 14px;
+    }
+
+    .vote-score {
+        color: #555;
+    }
+
+    .answer-quantity {
+        padding: 3px 8px;
+        border-radius: 4px;
+        color: #fff;
+        background-color: #4BACB8;
+    }
+
     .questions-container .questions-title {
         text-align: left;
         font-weight: normal;
+    }
+
+    .questions-container .description {
+        margin-bottom: 0.25em;
     }
 
     .questions-container .results-for {
@@ -344,8 +389,9 @@
         display: flex;
         flex-wrap: wrap;
         align-items: center;
+        margin-top: 0.25em;
         gap: 0.75em;
-        margin-top: 0.5em;
+        max-width: 25em;
     }
 
     .questions-container .question-list-cud-btn
